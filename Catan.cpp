@@ -1,10 +1,54 @@
 #include "Catan.hpp"
 
-Catan::Catan(Player player1, Player player2, Player player3) : players{player1, player2, player3} {
+#include <stdexcept>
+
+void Catan::play() {
+    Player& current_player = players[current_player_index];
+    current_player.play_turn(*this);
+    // current_player.play_turn();
+    current_player_index = (current_player_index + 1) % 3;
+}
+
+Player* Catan::is_game_over() {
+    if (players[0].get_victory_points() >= 10) {
+        return &players[0];
+    }
+    if (players[1].get_victory_points() >= 10) {
+        return &players[1];
+    }
+    if (players[2].get_victory_points() >= 10) {
+        return &players[2];
+    }
+    return nullptr;
+}
+
+void Catan::place_settlement(int vertex_id) {
+    throw std::logic_error("Not implemented");
+}
+
+void Catan::place_road(int edge_id) {
+    throw std::logic_error("Not implemented");
+}
+
+void Catan::place_city(int vertex_id) {
+    throw std::logic_error("Not implemented");
+}
+
+Card& Catan::buy_dev_card() {
+    throw std::logic_error("Not implemented");
+}
+
+void Catan::play_dev_card(Player& player, Card& card) {
+    throw std::logic_error("Not implemented");
+}
+
+Catan::Catan(Player& player1, Player& player2, Player& player3) : players{player1, player2, player3} {
     init_game();
 }
 
 void Catan::init_game() {
+    current_player_index = 0;
+
     for (int i = 0; i < 54; i++) {
         vertices[i] = LandVertex(i);
     }

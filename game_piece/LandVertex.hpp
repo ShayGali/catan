@@ -7,6 +7,7 @@
 #include "resource.hpp"
 
 class RoadEdge;  // Forward declaration
+class Player;    // Forward declaration
 
 using std::pair;
 

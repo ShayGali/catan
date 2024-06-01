@@ -16,5 +16,6 @@ int main() {
     catan.print_cell_status(0);
     catan.print_cell_status(8);
 
+    cout << player1.get_player_info() << endl;
     return 0;
 }
