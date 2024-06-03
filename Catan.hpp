@@ -10,6 +10,7 @@ class Catan {
     LandVertex vertices[54];
     RoadEdge edges[72];
     Player players[3];
+    vector<Card*> dev_cards;
 
     int current_player_index;
 
@@ -26,9 +27,12 @@ class Catan {
 
     Player* is_game_over();
 
-    void place_settlement(int vertex_id);
-    void place_road(int edge_id);
-    void place_city(int vertex_id);
-    Card& buy_dev_card();
+    void place_settlement(int vertex_id, Player& player, bool need_resources = true);
+    void place_road(int edge_id, Player& player, bool need_resources = true);
+    void place_city(int vertex_id, Player& player);
     void play_dev_card(Player& player, Card& card);
+
+    void roll_dice();
+
+    Card* get_dev_card(Player& player);
 };

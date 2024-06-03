@@ -12,7 +12,7 @@ PROG=catan
 run: ./$(PROG)
 	./$(PROG)
 
-catan: Catan.o main.o game_piece player
+catan: Catan.o main.o game_piece player cards
 	$(CXX) $(CXXFLAGS) -o catan Catan.o main.o $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 
 Catan.o: Catan.cpp
@@ -30,11 +30,11 @@ game_piece:
 player:
 	make -C player all
 
-# cards:
-# 	make -C cards all
+cards:
+	make -C cards all
 
 clean:
 	rm -f *.o $(PROG)
 	make -C game_piece clean
 	make -C player clean
-	# make -C cards clean
+	make -C cards clean

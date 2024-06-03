@@ -2,6 +2,11 @@
 
 #include <iostream>
 
+LandVertex::LandVertex(int id) : id(id) {
+    this->owner = nullptr;
+    this->isCity = false;
+}
+
 void LandVertex::set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2, LandVertex* vertex3) {
     this->adjacentVertices[0] = vertex1;
     this->adjacentVertices[1] = vertex2;
@@ -34,4 +39,36 @@ void LandVertex::print_status() {
     } else {
         std::cout << "No owner" << std::endl;
     }
+}
+
+LandVertex* LandVertex::get_adjacent_vertex(int index) {
+    return this->adjacentVertices[index];
+}
+
+RoadEdge* LandVertex::get_adjacent_edge(int index) {
+    return this->adjacentEdges[index];
+}
+
+pair<resource, int>* LandVertex::get_resources() {
+    return this->resources;
+}
+
+int LandVertex::get_id() {
+    return this->id;
+}
+
+Player* LandVertex::get_owner() {
+    return this->owner;
+}
+
+void LandVertex::set_owner(Player* player) {
+    this->owner = player;
+}
+
+bool LandVertex::get_isCity() {
+    return this->isCity;
+}
+
+void LandVertex::upgrade_to_city() {
+    this->isCity = true;
 }

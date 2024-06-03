@@ -1,5 +1,7 @@
 #include "Catan.hpp"
 
+#include <ctime>
+#include <iostream>
 #include <stdexcept>
 
 void Catan::play() {
@@ -22,24 +24,200 @@ Player* Catan::is_game_over() {
     return nullptr;
 }
 
-void Catan::place_settlement(int vertex_id) {
-    throw std::logic_error("Not implemented");
+void Catan::place_settlement(int vertex_id, Player& player, bool need_resources) {
+    // check if the vertex_id is valid
+    if (vertex_id < 0 || vertex_id > 53) {
+        throw std::invalid_argument("Invalid vertex id - must be between 0 and 53! (got " + std::to_string(vertex_id) + ")");
+    }
+
+    LandVertex& vertex = vertices[vertex_id];
+    // check if the vertex is empty
+    if (vertex.get_owner() != nullptr) {
+        throw std::invalid_argument("Vertex is already occupied! (owner: " + vertex.get_owner()->get_color() + ")");
+    }
+
+    // check if there is a road connected to the vertex
+    for (int i = 0; i < 3; i++) {
+        if (vertex.get_adjacent_edge(i) != nullptr) {
+            if (vertex.get_adjacent_edge(i)->get_owner() == &player) {
+                break;
+            }
+            if (i == 2) {
+                throw std::invalid_argument("No road connected to the vertex!");
+            }
+        }
+    }
+
+    // check if there is a settlement nearby
+    for (int i = 0; i < 3; i++) {
+        if (vertex.get_adjacent_vertex(i) != nullptr) {
+            if (vertex.get_adjacent_vertex(i)->get_owner() != nullptr) {
+                throw std::invalid_argument("There is a settlement nearby!");
+            }
+        }
+    }
+
+    // check if the player has enough resources
+    if (player.get_resource_count(resource::WOOD) < 1 || player.get_resource_count(resource::CLAY) < 1 || player.get_resource_count(resource::SHEEP) < 1 || player.get_resource_count(resource::WHEAT) < 1) {
+        throw std::invalid_argument("Not enough resources to place a settlement!");
+    }
+    if (need_resources) {
+        player.use_resource(resource::WOOD, 1);
+        player.use_resource(resource::CLAY, 1);
+        player.use_resource(resource::SHEEP, 1);
+        player.use_resource(resource::WHEAT, 1);
+    }
+    // place the settlement
+    vertex.set_owner(&player);
+    player.add_victory_points(1);
 }
 
-void Catan::place_road(int edge_id) {
+void Catan::place_road(int edge_id, Player& player, bool need_resources) {
     throw std::logic_error("Not implemented");
+
+    // check if the edge_id is valid
+    if (edge_id < 0 || edge_id > 71) {
+        throw std::invalid_argument("Invalid edge id - must be between 0 and 71! (got " + std::to_string(edge_id) + ")");
+    }
+
+    RoadEdge& edge = edges[edge_id];
+
+    // check if the edge is empty
+    if (edge.get_owner() != nullptr) {
+        throw std::invalid_argument("Edge is already occupied! (owner: " + edge.get_owner()->get_color() + ")");
+    }
+
+    // check if it is near a settlement/city or a road
+    if (edge.get_adjacent_vertex(0)->get_owner() != &player && edge.get_adjacent_vertex(1)->get_owner() != &player) {  // check if the player have a connected settlement
+        // check if the player have a connected road
+        for (int i = 0; i < 4; i++) {
+            if (edge.get_adjacent_edge(i) != nullptr) {
+                if (edge.get_adjacent_edge(i)->get_owner() == &player) {
+                    break;
+                }
+                if (i == 3) {
+                    throw std::invalid_argument("No connected road/settlement nearby!");
+                }
+            }
+        }
+    }
+
+    // check if the player has enough resources
+    if (player.get_resource_count(resource::WOOD) < 1 || player.get_resource_count(resource::CLAY) < 1) {
+        throw std::invalid_argument("Not enough resources to place a road!");
+    }
+
+    if (need_resources) {
+        player.use_resource(resource::WOOD, 1);
+        player.use_resource(resource::CLAY, 1);
+    }
+
+    // place the road
+    edge.set_owner(&player);
 }
 
-void Catan::place_city(int vertex_id) {
-    throw std::logic_error("Not implemented");
-}
+void Catan::place_city(int vertex_id, Player& player) {
+    // check if the vertex_id is valid
+    if (vertex_id < 0 || vertex_id > 53) {
+        throw std::invalid_argument("Invalid vertex id - must be between 0 and 53! (got " + std::to_string(vertex_id) + ")");
+    }
 
-Card& Catan::buy_dev_card() {
-    throw std::logic_error("Not implemented");
+    LandVertex& vertex = vertices[vertex_id];
+
+    // check if the vertex is the player's settlement
+    if (vertex.get_owner() != &player) {
+        throw std::invalid_argument("Vertex is not owned by the player!");
+    }
+
+    if (vertex.get_isCity()) {
+        throw std::invalid_argument("Vertex is already a city!");
+    }
+
+    // check if the player has enough resources
+    if (player.get_resource_count(resource::WHEAT) < 2 || player.get_resource_count(resource::STONE) < 3) {
+        throw std::invalid_argument("Not enough resources to place a city!");
+    }
+
+    player.use_resource(resource::WHEAT, 2);
+    player.use_resource(resource::STONE, 3);
+
+    // place the city
+    vertex.upgrade_to_city();
+    player.add_victory_points(1);
 }
 
 void Catan::play_dev_card(Player& player, Card& card) {
     throw std::logic_error("Not implemented");
+}
+
+void Catan::print_cell_status(int cell_id) {
+    vertices[cell_id].print_status();
+}
+
+void Catan::roll_dice() {
+    int dice_1 = rand() % 6 + 1;
+    int dice_2 = rand() % 6 + 1;
+    int sum = dice_1 + dice_2;
+
+    std::cout << "Dice 1: " << dice_1
+              << "\nDice 2: " << dice_2
+              << "\nSum: " << sum << std::endl;
+
+    for (int i = 0; i < 54; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (vertices[i].get_resources()[j].second == sum) {
+                if (vertices[i].get_owner() != nullptr) {
+                    std::cout << "Player " << vertices[i].get_owner()->get_color()
+                              << " gets " << (vertices[i].get_isCity() ? 2 * vertices[i].get_resources()[j].first : vertices[i].get_resources()[j].first)
+                              << std::endl;
+                    if (vertices[i].get_isCity()) {
+                        vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 2);
+                    } else {
+                        vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 1);
+                    }
+                }
+            }
+        }
+    }
+}
+
+Card* Catan::get_dev_card(Player& player) {
+    // check if there are any cards left
+    if (dev_cards.empty()) {
+        throw std::runtime_error("No development cards left");
+    }
+
+    // check if player has enough resources
+    if (player.get_resource_count(resource::WHEAT) < 1 || player.get_resource_count(resource::STONE) < 1 || player.get_resource_count(resource::SHEEP) < 1) {
+        throw std::runtime_error("Player does not have enough resources to buy a development card");
+    }
+
+    // remove resources from player
+    player.use_resource(resource::WHEAT, 1);
+    player.use_resource(resource::STONE, 1);
+    player.use_resource(resource::SHEEP, 1);
+
+    // get random card
+    int num_of_cards = dev_cards.size();
+    int rand_index = rand() % num_of_cards;
+    Card* card = dev_cards[rand_index];
+
+    // remove card from deck
+    dev_cards.erase(dev_cards.begin() + rand_index);
+
+    if (card->get_type() == CardType::KNIGHT) {
+        player.add_knight();
+        if (player.get_knights() >= 3) {
+            player.add_victory_points(2);
+        }
+    }
+
+    if (card->get_type() == CardType::VICTORY_POINT) {
+        player.add_victory_points(1);
+    }
+
+    // return card to player
+    return card;
 }
 
 Catan::Catan(Player& player1, Player& player2, Player& player3) : players{player1, player2, player3} {
@@ -59,6 +237,9 @@ void Catan::init_game() {
     init_vertices();
     init_edges();
     init_board();
+
+    // seed random number generator
+    srand(time(0));
 }
 
 void Catan::init_vertices() {
@@ -392,14 +573,69 @@ void Catan::init_board() {
     vertices[6].set_resource(resource::WOOD, 9, resource::NONE, 0, resource::NONE, 0);
 
     // third row
-    vertices[7].set_resource(resource::STONE, 10, resource::WHEAT, 12, resource::NONE, 0);
-    vertices[8].set_resource(resource::STONE, 10, resource::SHEEP, 2, resource::CLAY, 6);
-    vertices[9].set_resource(resource::SHEEP, 2, resource::WOOD, 9, resource::STONE, 4);
-    vertices[10].set_resource(resource::WOOD, 9, resource::CLAY, 10, resource::NONE, 0);
+    vertices[7].set_resource(resource::WHEAT, 12, resource::STONE, 10, resource::NONE, 0);
+    vertices[8].set_resource(resource::CLAY, 6, resource::STONE, 10, resource::SHEEP, 2);
+    vertices[9].set_resource(resource::SHEEP, 4, resource::SHEEP, 2, resource::WOOD, 9);
+    vertices[10].set_resource(resource::CLAY, 10, resource::WOOD, 9, resource::NONE, 0);
 
-    // TODO: Finish the rest of the board
-}
+    // fourth row
+    vertices[11].set_resource(resource::WHEAT, 12, resource::NONE, 0, resource::NONE, 0);
+    vertices[12].set_resource(resource::WHEAT, 12, resource::CLAY, 6, resource::STONE, 10);
+    vertices[13].set_resource(resource::CLAY, 6, resource::SHEEP, 2, resource::SHEEP, 4);
+    vertices[14].set_resource(resource::WOOD, 9, resource::CLAY, 10, resource::SHEEP, 4);
+    vertices[15].set_resource(resource::CLAY, 10, resource::NONE, 0, resource::NONE, 0);
 
-void Catan::print_cell_status(int cell_id) {
-    vertices[cell_id].print_status();
+    // fifth row
+    vertices[16].set_resource(resource::WHEAT, 9, resource::WHEAT, 12, resource::NONE, 0);
+    vertices[17].set_resource(resource::WOOD, 11, resource::WHEAT, 12, resource::CLAY, 6);
+    vertices[18].set_resource(resource::DESERT, 0, resource::CLAY, 6, resource::SHEEP, 4);
+    vertices[19].set_resource(resource::WOOD, 3, resource::SHEEP, 4, resource::CLAY, 10);
+    vertices[20].set_resource(resource::STONE, 8, resource::CLAY, 10, resource::NONE, 0);
+
+    // sixth row
+    vertices[21].set_resource(resource::WHEAT, 9, resource::NONE, 0, resource::NONE, 0);
+    vertices[22].set_resource(resource::WHEAT, 9, resource::WOOD, 11, resource::WHEAT, 12);
+    vertices[23].set_resource(resource::WOOD, 11, resource::CLAY, 6, resource::DESERT, 0);
+    vertices[24].set_resource(resource::SHEEP, 4, resource::DESERT, 0, resource::WOOD, 3);
+    vertices[25].set_resource(resource::STONE, 8, resource::WOOD, 3, resource::CLAY, 10);
+    vertices[26].set_resource(resource::STONE, 8, resource::NONE, 0, resource::NONE, 0);
+
+    // seventh row
+    vertices[27].set_resource(resource::WHEAT, 9, resource::NONE, 0, resource::NONE, 0);
+    vertices[28].set_resource(resource::WOOD, 8, resource::WHEAT, 9, resource::WOOD, 11);
+    vertices[29].set_resource(resource::STONE, 3, resource::WOOD, 11, resource::DESERT, 0);
+    vertices[30].set_resource(resource::WHEAT, 4, resource::DESERT, 0, resource::WOOD, 3);
+    vertices[31].set_resource(resource::SHEEP, 5, resource::WOOD, 3, resource::STONE, 8);
+    vertices[32].set_resource(resource::STONE, 8, resource::NONE, 0, resource::NONE, 0);
+
+    // eighth row
+    vertices[33].set_resource(resource::WHEAT, 9, resource::WOOD, 8, resource::NONE, 0);
+    vertices[34].set_resource(resource::WOOD, 8, resource::STONE, 3, resource::WOOD, 11);
+    vertices[35].set_resource(resource::STONE, 3, resource::WHEAT, 4, resource::DESERT, 0);
+    vertices[36].set_resource(resource::WHEAT, 4, resource::SHEEP, 5, resource::WOOD, 3);
+    vertices[37].set_resource(resource::SHEEP, 5, resource::STONE, 8, resource::NONE, 0);
+
+    // ninth row
+    vertices[38].set_resource(resource::WOOD, 8, resource::NONE, 0, resource::NONE, 0);
+    vertices[39].set_resource(resource::CLAY, 5, resource::WOOD, 8, resource::STONE, 3);
+    vertices[40].set_resource(resource::WHEAT, 6, resource::STONE, 3, resource::WHEAT, 4);
+    vertices[41].set_resource(resource::SHEEP, 11, resource::WHEAT, 4, resource::SHEEP, 5);
+    vertices[42].set_resource(resource::SHEEP, 5, resource::NONE, 0, resource::NONE, 0);
+
+    // tenth row
+    vertices[43].set_resource(resource::CLAY, 5, resource::WOOD, 8, resource::NONE, 0);
+    vertices[44].set_resource(resource::WHEAT, 6, resource::CLAY, 5, resource::STONE, 3);
+    vertices[45].set_resource(resource::SHEEP, 11, resource::WHEAT, 6, resource::WHEAT, 4);
+    vertices[46].set_resource(resource::SHEEP, 5, resource::SHEEP, 11, resource::NONE, 0);
+
+    // eleventh row
+    vertices[47].set_resource(resource::CLAY, 5, resource::NONE, 0, resource::NONE, 0);
+    vertices[48].set_resource(resource::CLAY, 5, resource::WHEAT, 6, resource::NONE, 0);
+    vertices[49].set_resource(resource::WHEAT, 6, resource::SHEEP, 11, resource::NONE, 0);
+    vertices[50].set_resource(resource::SHEEP, 11, resource::NONE, 0, resource::NONE, 0);
+
+    // twelfth row
+    vertices[51].set_resource(resource::CLAY, 5, resource::NONE, 0, resource::NONE, 0);
+    vertices[52].set_resource(resource::WHEAT, 6, resource::NONE, 0, resource::NONE, 0);
+    vertices[53].set_resource(resource::SHEEP, 11, resource::NONE, 0, resource::NONE, 0);
 }

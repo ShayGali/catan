@@ -5,7 +5,7 @@ CXXFLAGS=-std=c++2a -g -Wall
 
 all: Player.o
 
-Player.o: Player.cpp Player.hpp ../game_piece/resource.hpp
+Player.o: Player.cpp Player.hpp ../game_piece/resource.hpp ../cards/Card.hpp
 	$(CXX) $(CXXFLAGS) -c Player.cpp
 
 clean:

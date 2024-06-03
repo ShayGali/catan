@@ -22,14 +22,8 @@ class LandVertex {
 
    public:
     LandVertex() = default;
-    LandVertex(int id) : id(id) {
-        this->owner = nullptr;
-        this->isCity = false;
-    }
+    LandVertex(int id);
 
-    void set_owner(Player* player) {
-        this->owner = player;
-    }
 
     void set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2, LandVertex* vertex3);
 
@@ -37,9 +31,20 @@ class LandVertex {
 
     void set_resource(resource res1, int num1, resource res2, int num2, resource res3, int num3);
 
-    int get_id() {
-        return this->id;
-    }
+    LandVertex* get_adjacent_vertex(int index);
+
+    RoadEdge* get_adjacent_edge(int index);
+
+    pair<resource, int>* get_resources();
+
+    int get_id();
 
     void print_status();
+
+    Player* get_owner();
+    void set_owner(Player* player);
+
+    bool get_isCity();
+
+    void upgrade_to_city();
 };

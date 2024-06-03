@@ -13,15 +13,18 @@ class RoadEdge {
 
    public:
     RoadEdge() = default;
-    RoadEdge(int id) : id(id) {
-        this->owner = nullptr;
-    }
+    RoadEdge(int id);
 
     void set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2);
 
     void set_adjacent_edge(RoadEdge* edge1, RoadEdge* edge2, RoadEdge* edge3, RoadEdge* edge4);
 
-    int get_id() {
-        return this->id;
-    }
+    LandVertex* get_adjacent_vertex(int index);
+
+    RoadEdge* get_adjacent_edge(int index);
+
+    void set_owner(Player* player);
+
+    Player* get_owner();
+    int get_id();
 };

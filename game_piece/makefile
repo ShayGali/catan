@@ -8,7 +8,7 @@ all: LandVertex.o RoadEdge.o
 LandVertex.o: LandVertex.cpp LandVertex.hpp resource.hpp
 	$(CXX) $(CXXFLAGS) -c LandVertex.cpp
 
-RoadEdge.o: RoadEdge.cpp RoadEdge.hpp 
+RoadEdge.o: RoadEdge.cpp RoadEdge.hpp resource.hpp
 	$(CXX) $(CXXFLAGS) -c RoadEdge.cpp
 
 clean:
