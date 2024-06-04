@@ -6,23 +6,25 @@ using std::cout, std::cin;
 
 Player::Player(PlayerColor color) {
     this->color = color;
+    victoryPoints = 0;
+    knights_counter = 0;
     for (int i = 0; i < 5; i++) {
         resourceCount[i] = 0;
     }
 }
 
 void Player::play_turn(Catan &game) {
-    throw std::logic_error("Not implemented");
     char choice;
-    do {
-        cout << "Player " << get_color() << " turn\n";
-        cout << "1. Roll dice\n";
-        cout << "2. Use development card\n";
+    while (true) {
+        cout << "Choose an action:\n";
+        cout << "\t1. Roll dice\n";
+        cout << "\t2. Use development card\n";
 
         // get user input from console
         cin >> choice;
         if (choice == '1') {
             game.roll_dice();
+            break;
         } else if (choice == '2') {
             // use development card -
             display_dev_cards();
@@ -36,7 +38,7 @@ void Player::play_turn(Catan &game) {
             cout << "Invalid choice\n";
             continue;
         }
-    } while (choice != '1' || choice != '2');
+    };
 
     while (true) {
         cout << "Choose an action:\n";
@@ -44,8 +46,10 @@ void Player::play_turn(Catan &game) {
         cout << "2. Place road\n";
         cout << "3. Place city\n";
         cout << "4. Buy development card\n";
-        cout << "5. trade\n";
-        cout << "6. End turn\n";
+        cout << "5. Trade\n";
+        cout << "6. Display resources\n";
+        cout << "7. Display development cards\n";
+        cout << "8. End turn\n";
 
         cin >> choice;
 
@@ -70,7 +74,13 @@ void Player::play_turn(Catan &game) {
                 this->make_trade(game);
                 break;
             }
-            case '6': {
+            case '6':
+                display_resources();
+                break;
+            case '7':
+                display_dev_cards();
+                break;
+            case '8': {
                 return;
             }
             default: {
@@ -96,6 +106,8 @@ std::string Player::get_color() {
             return "\033[1;34mBLUE\033[0m";
         case PlayerColor::YELLOW:
             return "\033[1;33mYELLOW\033[0m";
+        default:
+            throw std::runtime_error("Invalid color");
     }
 }
 
@@ -107,6 +119,8 @@ std::string Player::get_color_code() {
             return "\033[1;34m";
         case PlayerColor::YELLOW:
             return "\033[1;33m";
+        default:
+            throw std::runtime_error("Invalid color");
     }
 }
 
@@ -183,9 +197,10 @@ void Player::place_settlement(Catan &game, bool first_round) {
         cin >> x;
 
         if (x == -1) {
-            if (first_round)
+            if (first_round) {
                 cout << "You must place a settlement\n";
-            else
+                continue;
+            } else
                 return;
         }
 
@@ -211,9 +226,10 @@ void Player::place_road(Catan &game, bool first_round) {
         int x;
         cin >> x;
         if (x == -1) {
-            if (first_round)
+            if (first_round) {
                 cout << "You must place a road\n";
-            else
+                continue;
+            } else
                 return;
         }
         try {
@@ -319,4 +335,107 @@ bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &of
 
 bool Player::operator==(const Player &player) const {
     return this->color == player.color;
+}
+
+int Player::get_total_resources() {
+    int total = 0;
+    for (int i = 0; i < 5; i++) {
+        total += resourceCount[i];
+    }
+    return total;
+}
+
+void Player::return_resources_on_seven_roll() {
+    cout << "Player " << get_color() << " has more than 7 resources\n";
+    int total = get_total_resources();
+    int total_to_return = total / 2;
+    cout << "You must return " << total_to_return << " resources\n";
+
+    display_resources();
+    while (true) {
+        int sheep_count;
+        int wheat_count;
+        int stone_count;
+        int clay_count;
+        int wood_count;
+        while (true) {
+            if (get_resource_count(resource::WOOD) > 0) {
+                cout << "How many wood do you want to return?\n";
+                cin >> wood_count;
+                if (wood_count > get_resource_count(resource::WOOD)) {
+                    cout << "You don't have enough wood\n";
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        while (true) {
+            if (get_resource_count(resource::CLAY) > 0) {
+                cout << "How many clay do you want to return?\n";
+                cin >> clay_count;
+                if (clay_count > get_resource_count(resource::CLAY)) {
+                    cout << "You don't have enough clay\n";
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        while (true) {
+            if (get_resource_count(resource::SHEEP) > 0) {
+                cout << "How many sheep do you want to return?\n";
+                cin >> sheep_count;
+                if (sheep_count > get_resource_count(resource::SHEEP)) {
+                    cout << "You don't have enough sheep\n";
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        while (true) {
+            if (get_resource_count(resource::WHEAT) > 0) {
+                cout << "How many wheat do you want to return?\n";
+                cin >> wheat_count;
+                if (wheat_count > get_resource_count(resource::WHEAT)) {
+                    cout << "You don't have enough wheat\n";
+                    continue;
+                }
+
+                break;
+            }
+        }
+
+        while (true) {
+            if (get_resource_count(resource::STONE) > 0) {
+                cout << "How many stone do you want to return?\n";
+                cin >> stone_count;
+                if (stone_count > get_resource_count(resource::STONE)) {
+                    cout << "You don't have enough stone\n";
+                    continue;
+                }
+
+                break;
+            }
+        }
+        int total_returned = wood_count + clay_count + sheep_count + wheat_count + stone_count;
+        if (total_to_return != total_returned) {
+            cout << "You must return exactly " << total_to_return << " resources\n";
+            cout << "You returned " << total_returned << " resources\n";
+            cout << "Try again\n";
+            continue;
+        }
+
+        use_resource(resource::WOOD, wood_count);
+        use_resource(resource::CLAY, clay_count);
+        use_resource(resource::SHEEP, sheep_count);
+        use_resource(resource::WHEAT, wheat_count);
+        use_resource(resource::STONE, stone_count);
+
+        break;
+    }
 }

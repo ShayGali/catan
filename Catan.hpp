@@ -12,9 +12,6 @@
 constexpr int NUM_PLAYERS = 3;
 class Catan {
    private:
-    RoadEdge edges[72];
-    Player players[3];
-    vector<Card*> dev_cards;
 
     int current_player_index;
 
@@ -27,6 +24,9 @@ class Catan {
    public:
     ~Catan();
     LandVertex vertices[54];
+    RoadEdge edges[72];
+    Player players[3];
+    vector<Card*> dev_cards;
     Catan(Player& player1, Player& player2, Player& player3);
     void first_round();
     void play_turn();
@@ -40,6 +40,8 @@ class Catan {
     void play_dev_card(Player& player, Card& card);
 
     void roll_dice();
+    void give_resources(int dices_sum);
+    void return_resources_on_seven_roll();
 
     Card* get_dev_card(Player& player);
 

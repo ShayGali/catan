@@ -41,7 +41,7 @@ void Catan::first_round() {
 
 void Catan::play_turn() {
     display_board();
-
+    cout << current_player_index << "\n";
     Player& current_player = players[current_player_index];
     cout << current_player.get_color() << " turn\n";
     current_player.play_turn(*this);
@@ -89,7 +89,7 @@ void Catan::place_settlement(int vertex_id, Player& player, bool first_round) {
     for (int i = 0; i < 3; i++) {
         if (vertex.get_adjacent_vertex(i) != nullptr) {
             if (vertex.get_adjacent_vertex(i)->get_owner() != nullptr) {
-                throw std::invalid_argument("There is a settlement nearby!");
+                throw std::invalid_argument("There is a settlement nearby! (trying to place a settlement at vertex " + std::to_string(vertex_id) + " and there is a settlement at vertex " + std::to_string(vertex.get_adjacent_vertex(i)->get_id()) + ")");
             }
         }
     }
@@ -263,20 +263,33 @@ void Catan::roll_dice() {
               << "\nDice 2: " << dice_2
               << "\nSum: " << sum << std::endl;
 
+    if (sum == 7) {
+        return_resources_on_seven_roll();
+    } else {
+        give_resources(sum);
+    }
+}
+
+void Catan::give_resources(int dices_sum) {
     for (int i = 0; i < 54; i++) {
         for (int j = 0; j < 3; j++) {
-            if (vertices[i].get_resources()[j].second == sum) {
-                if (vertices[i].get_owner() != nullptr) {
-                    std::cout << "Player " << vertices[i].get_owner()->get_color()
-                              << " gets " << (vertices[i].get_isCity() ? 2 * vertices[i].get_resources()[j].first : vertices[i].get_resources()[j].first)
-                              << std::endl;
-                    if (vertices[i].get_isCity()) {
-                        vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 2);
-                    } else {
-                        vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 1);
-                    }
+            if (vertices[i].get_resources()[j].second == dices_sum && vertices[i].get_owner() != nullptr) {
+                if(vertices[i].get_isCity()){
+                    cout << "Player " << vertices[i].get_owner()->get_color() << " gets 2 " << vertices[i].get_resources()[j].first.get_emoji() << " from vertex " << i << "\n";
+                    vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 2);
+                } else {
+                    cout << "Player " << vertices[i].get_owner()->get_color() << " gets 1 " << vertices[i].get_resources()[j].first.get_emoji() << " from vertex " << i << "\n";
+                    vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 1);
                 }
             }
+        }
+    }
+}
+
+void Catan::return_resources_on_seven_roll() {
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        if (players[i].get_total_resources() > 7) {
+            players[i].return_resources_on_seven_roll();
         }
     }
 }
@@ -769,7 +782,7 @@ void Catan::display_board() {
          << "       " << edges[10].get_color_code() << "/   " << edges[11].get_color_code() << "\\ " << edges[12].get_color_code() << "/   " << edges[13].get_color_code() << "\\   " << edges[14].get_color_code() << "/   " << edges[15].get_color_code() << "\\  " << edges[16].get_color_code() << "/   " << edges[17].get_color_code() << "\\\033[0m\n"
          << "      " << vertices[11].get_settlement_string() << "     " << vertices[12].get_settlement_string() << "      " << vertices[13].get_settlement_string() << "      " << vertices[14].get_settlement_string() << "      " << vertices[15].get_settlement_string() << "\n"
          << "      " << edges[18].get_color_code() << "| " << vertices[7].get_resources()[0].first.get_emoji() << edges[19].get_color_code() << "  |  " << vertices[8].get_resources()[0].first.get_emoji() << edges[20].get_color_code() << "  |  " << vertices[9].get_resources()[0].first.get_emoji() << edges[21].get_color_code() << "  |  " << vertices[10].get_resources()[0].first.get_emoji() << "  " << edges[22].get_color_code() << "|\033[0m\n"
-         << "      " << vertices[16].get_settlement_string() << " " << vertices[7].get_resources()[0].second << "  " << vertices[17].get_settlement_string() << "   " << vertices[8].get_resources()[0].second << "   " << vertices[18].get_settlement_string() << "  " << vertices[9].get_resources()[0].second << "  " << vertices[19].get_settlement_string() << "   " << vertices[10].get_resources()[0].second << " " << vertices[20].get_settlement_string() << "\n"
+         << "      " << vertices[16].get_settlement_string() << " " << vertices[7].get_resources()[0].second << "  " << vertices[17].get_settlement_string() << "   " << vertices[8].get_resources()[0].second << "   " << vertices[18].get_settlement_string() << "  " << vertices[9].get_resources()[0].second << "  " << vertices[19].get_settlement_string() << "  " << vertices[10].get_resources()[0].second << "  " << vertices[20].get_settlement_string() << "\n"
          << "    " << edges[23].get_color_code() << "/   " << edges[24].get_color_code() << "\\ " << edges[25].get_color_code() << "/   " << edges[26].get_color_code() << "\\   " << edges[27].get_color_code() << "/   " << edges[28].get_color_code() << "\\ " << edges[29].get_color_code() << "/   " << edges[30].get_color_code() << "\\  " << edges[31].get_color_code() << "/   " << edges[32].get_color_code() << "\\\033[0m\n"
          << "   " << vertices[21].get_settlement_string() << "     " << vertices[22].get_settlement_string() << "      " << vertices[23].get_settlement_string() << "      " << vertices[24].get_settlement_string() << "     " << vertices[25].get_settlement_string() << "      " << vertices[26].get_settlement_string() << "\n"
          << "   " << edges[33].get_color_code() << "| " << vertices[16].get_resources()[0].first.get_emoji() << edges[34].get_color_code() << "  |  " << vertices[17].get_resources()[0].first.get_emoji() << edges[35].get_color_code() << "  |  " << vertices[18].get_resources()[0].first.get_emoji() << edges[36].get_color_code() << "   | " << vertices[19].get_resources()[0].first.get_emoji() << edges[37].get_color_code() << "  | " << vertices[20].get_resources()[0].first.get_emoji() << "   " << edges[38].get_color_code() << "|\033[0m\n"
@@ -780,9 +793,8 @@ void Catan::display_board() {
          << "      " << vertices[38].get_settlement_string() << "  " << vertices[28].get_resources()[0].second << "  " << vertices[39].get_settlement_string() << "   " << vertices[29].get_resources()[0].second << "  " << vertices[40].get_settlement_string() << "   " << vertices[30].get_resources()[0].second << "  " << vertices[41].get_settlement_string() << "   " << vertices[31].get_resources()[0].second << "  " << vertices[42].get_settlement_string() << "\n"
          << "       " << edges[54].get_color_code() << "\\   " << edges[55].get_color_code() << "/  " << edges[56].get_color_code() << "\\   " << edges[57].get_color_code() << "/  " << edges[58].get_color_code() << "\\   " << edges[59].get_color_code() << "/  " << edges[60].get_color_code() << "\\   " << edges[61].get_color_code() << "/\033[0m\n"
          << "         " << vertices[43].get_settlement_string() << "      " << vertices[44].get_settlement_string() << "      " << vertices[45].get_settlement_string() << "      " << vertices[46].get_settlement_string() << "\n"
-         << "         " << edges[62].get_color_code() << "|  " << vertices[39].get_resources()[0].first.get_emoji() << edges[63].get_color_code() << "  |  " << vertices[40].get_resources()[0].first.get_emoji() << edges[64].get_color_code()<< "  |  " << vertices[41].get_resources()[0].first.get_emoji() << edges[65].get_color_code() << "  |\033[0m\n"
+         << "         " << edges[62].get_color_code() << "|  " << vertices[39].get_resources()[0].first.get_emoji() << edges[63].get_color_code() << "  |  " << vertices[40].get_resources()[0].first.get_emoji() << edges[64].get_color_code() << "  |  " << vertices[41].get_resources()[0].first.get_emoji() << edges[65].get_color_code() << "  |\033[0m\n"
          << "         " << vertices[47].get_settlement_string() << "   " << vertices[39].get_resources()[0].second << "  " << vertices[48].get_settlement_string() << "   " << vertices[40].get_resources()[0].second << "  " << vertices[49].get_settlement_string() << "   " << vertices[41].get_resources()[0].second << " " << vertices[50].get_settlement_string() << "\n"
          << "           " << edges[66].get_color_code() << "\\   " << edges[67].get_color_code() << "/  " << edges[68].get_color_code() << "\\   " << edges[69].get_color_code() << "/  " << edges[70].get_color_code() << "\\   " << edges[71].get_color_code() << "/\033[0m\n"
          << "             " << vertices[51].get_settlement_string() << "      " << vertices[52].get_settlement_string() << "       " << vertices[53].get_settlement_string() << "\n";
-    ;
 }

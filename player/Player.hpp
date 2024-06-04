@@ -22,10 +22,10 @@ enum class PlayerColor {
 class Player {
    private:
     PlayerColor color;
-    int resourceCount[5];  // WOOD, CLAY, SHEEP, WHEAT, STONE
     int victoryPoints;
-    vector<Card*> devCards;
     int knights_counter;
+    int resourceCount[5];  // WOOD, CLAY, SHEEP, WHEAT, STONE
+    vector<Card*> devCards;
 
    public:
     Player(PlayerColor color);
@@ -41,9 +41,12 @@ class Player {
     void add_victory_points(int points);
 
     int get_resource_count(resource resource);
+    int get_total_resources();
     void add_resource(resource resource, int count);
     void use_resource(resource resource, int count);
     void display_resources();
+    void return_resources_on_seven_roll();
+
 
     void display_dev_cards();
     void use_dev_card(int card_index);
