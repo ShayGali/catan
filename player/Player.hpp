@@ -48,8 +48,8 @@ class Player {
     void display_dev_cards();
     void use_dev_card(int card_index);
 
-    void place_settlement(Catan& game);
-    void place_road(Catan& game);
+    void place_settlement(Catan& game, bool first_round = false);
+    void place_road(Catan& game, bool first_round = false);
     void place_city(Catan& game);
 
     bool trade_request(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<Card*, int>>& request_dev);

@@ -91,11 +91,11 @@ void Player::add_victory_points(int points) {
 std::string Player::get_color() {
     switch (this->color) {
         case PlayerColor::RED:
-            return "RED";
+            return "\033[1;31mRED\033[0m";
         case PlayerColor::BLUE:
-            return "BLUE";
+            return "\033[1;34mBLUE\033[0m";
         case PlayerColor::YELLOW:
-            return "YELLOW";
+            return "\033[1;33mYELLOW\033[0m";
     }
 }
 
@@ -170,9 +170,9 @@ void Player::buy_dev_card(Catan &game) {
     devCards.push_back(card);
 }
 
-void Player::place_settlement(Catan &game) {
+void Player::place_settlement(Catan &game, bool first_round) {
     // check if the player has enough resources
-    if (resourceCount[0] < 1 || resourceCount[1] < 1 || resourceCount[2] < 1 || resourceCount[3] < 1) {
+    if (!first_round && (resourceCount[0] < 1 || resourceCount[1] < 1 || resourceCount[2] < 1 || resourceCount[3] < 1)) {
         cout << "Not enough resources to place a settlement\n";
         return;
     }
@@ -183,11 +183,14 @@ void Player::place_settlement(Catan &game) {
         cin >> x;
 
         if (x == -1) {
-            return;
+            if (first_round)
+                cout << "You must place a settlement\n";
+            else
+                return;
         }
 
         try {
-            game.place_settlement(x, *this);
+            game.place_settlement(x, *this, first_round);
             break;
         } catch (std::invalid_argument &e) {
             cout << e.what() << "\n";
@@ -196,9 +199,9 @@ void Player::place_settlement(Catan &game) {
     }
 }
 
-void Player::place_road(Catan &game) {
+void Player::place_road(Catan &game, bool first_round) {
     // check if the player has enough resources
-    if (resourceCount[0] < 1 || resourceCount[1] < 1) {
+    if (!first_round && (resourceCount[0] < 1 || resourceCount[1] < 1)) {
         cout << "Not enough resources to place a road\n";
         return;
     }
@@ -208,10 +211,13 @@ void Player::place_road(Catan &game) {
         int x;
         cin >> x;
         if (x == -1) {
-            return;
+            if (first_round)
+                cout << "You must place a road\n";
+            else
+                return;
         }
         try {
-            game.place_road(x, *this);
+            game.place_road(x, *this, first_round);
             break;
         } catch (std::invalid_argument &e) {
             cout << e.what() << "\n";

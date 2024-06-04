@@ -25,18 +25,17 @@ class Catan {
     void init_dev_cards();
 
    public:
-
-   ~Catan();
+    ~Catan();
     LandVertex vertices[54];
     Catan(Player& player1, Player& player2, Player& player3);
-
-    void play();
+    void first_round();
+    void play_turn();
     void print_cell_status(int cell_id);
     void display_board();
     Player* is_game_over();
 
-    void place_settlement(int vertex_id, Player& player, bool need_resources = true);
-    void place_road(int edge_id, Player& player, bool need_resources = true);
+    void place_settlement(int vertex_id, Player& player, bool first_round = false);
+    void place_road(int edge_id, Player& player, bool first_round = false);
     void place_city(int vertex_id, Player& player);
     void play_dev_card(Player& player, Card& card);
 
