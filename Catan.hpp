@@ -22,8 +22,11 @@ class Catan {
     void init_vertices();
     void init_edges();
     void init_board();
+    void init_dev_cards();
 
    public:
+
+   ~Catan();
     LandVertex vertices[54];
     Catan(Player& player1, Player& player2, Player& player3);
 

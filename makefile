@@ -3,7 +3,7 @@ CXXFLAGS=-std=c++2a -g -Wall
 
 GAME_PIECE_OBJECTS=game_piece/LandVertex.o game_piece/RoadEdge.o
 PLAYER_OBJECTS=player/Player.o
-CARDS_OBJECTS=
+CARDS_OBJECTS=cards/KngihtCard.o cards/MonopolyCard.o cards/RoadBuildCard.o cards/VictoryPointCard.o cards/YearOfPlentyCard.o
 
 PROG=catan
 

@@ -4,6 +4,22 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "cards/KngihtCard.hpp"
+#include "cards/MonopolyCard.hpp"
+#include "cards/RoadBuildCard.hpp"
+#include "cards/VictoryPointCard.hpp"
+#include "cards/YearOfPlentyCard.hpp"
+
+Catan::Catan(Player& player1, Player& player2, Player& player3) : players{player1, player2, player3} {
+    init_game();
+}
+
+Catan::~Catan() {
+    for (int i = 0; i < dev_cards.size(); i++) {
+        delete dev_cards[i];
+    }
+}
+
 void Catan::play() {
     Player& current_player = players[current_player_index];
     current_player.play_turn(*this);
@@ -285,11 +301,8 @@ Card* Catan::get_dev_card(Player& player) {
     return nullptr;
 }
 
-Catan::Catan(Player& player1, Player& player2, Player& player3) : players{player1, player2, player3} {
-    init_game();
-}
-
 void Catan::init_game() {
+    srand(time(0));
     current_player_index = 0;
 
     for (int i = 0; i < 54; i++) {
@@ -302,9 +315,9 @@ void Catan::init_game() {
     init_vertices();
     init_edges();
     init_board();
+    init_dev_cards();
 
     // seed random number generator
-    srand(time(0));
 }
 
 void Catan::init_vertices() {
@@ -703,6 +716,21 @@ void Catan::init_board() {
     vertices[51].set_resource(resource::CLAY, 5, resource::NONE, 0, resource::NONE, 0);
     vertices[52].set_resource(resource::WHEAT, 6, resource::NONE, 0, resource::NONE, 0);
     vertices[53].set_resource(resource::SHEEP, 11, resource::NONE, 0, resource::NONE, 0);
+}
+
+void Catan::init_dev_cards() {
+    for (int i = 0; i < 3; i++) {
+        dev_cards.push_back(new KnightCard());
+    }
+    for (int i = 0; i < 2; i++) {
+        dev_cards.push_back(new RoadBuildCard());
+        dev_cards.push_back(new YearOfPlentyCard());
+        dev_cards.push_back(new MonopolyCard());
+    }
+
+    for (int i = 0; i < 5; i++) {
+        dev_cards.push_back(new VictoryPointCard());
+    }
 }
 
 void Catan::display_board() {
