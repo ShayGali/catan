@@ -17,7 +17,7 @@ class resource {
     resource() = default;
     resource(Value value) : value(value) {}
 
-    std::string get_emoji() {
+    std::string get_emoji() const {
         switch (this->value) {
             case Value::WOOD:
                 return "🌲";

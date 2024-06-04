@@ -27,4 +27,6 @@ class RoadEdge {
 
     Player* get_owner();
     int get_id();
+
+    std::string get_color_code();
 };

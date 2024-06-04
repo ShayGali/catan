@@ -1,8 +1,5 @@
 #include "Player.hpp"
 
-#include <iostream>
-#include <stdexcept>
-
 #include "../Catan.hpp"
 
 using std::cout, std::cin;
@@ -102,6 +99,17 @@ std::string Player::get_color() {
     }
 }
 
+std::string Player::get_color_code() {
+    switch (this->color) {
+        case PlayerColor::RED:
+            return "\033[1;31m";
+        case PlayerColor::BLUE:
+            return "\033[1;34m";
+        case PlayerColor::YELLOW:
+            return "\033[1;33m";
+    }
+}
+
 std::string Player::get_player_info() {
     std::string info = "Player color: " + get_color() + "\n";
     info += "Resources: \n";
@@ -134,7 +142,7 @@ void Player::display_resources() {
          << "\t🧱:" << resourceCount[1] << "\n"
          << "\t🐑:" << resourceCount[2] << "\n"
          << "\t🌾:" << resourceCount[3] << "\n"
-         << "\t🪨:" << resourceCount[4] << "\n";
+         << "\t🪨 :" << resourceCount[4] << "\n";
 }
 
 void Player::display_dev_cards() {
@@ -250,4 +258,59 @@ void Player::add_knight() {
 
 int Player::get_knights() {
     return knights_counter;
+}
+
+void Player::remove_dev_card(Card *card) {
+    devCards.erase(std::remove(devCards.begin(), devCards.end(), card), devCards.end());
+}
+
+void Player::add_dev_card(Card *card) {
+    devCards.push_back(card);
+}
+
+int Player::get_dev_card_count(const CardType &type) {
+    int count = 0;
+    for (int i = 0; i < devCards.size(); i++) {
+        if (devCards[i]->get_type() == type) {
+            count++;
+        }
+    }
+    return count;
+}
+
+bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<pair<Card *, int>> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<Card *, int>> &request_dev) {
+    cout << "Player " << get_color() << " received a trade request from player " << trader.get_color() << "\n";
+    cout << "Offered resources: \n";
+    for (auto &res : offer_res) {
+        cout << "\t" << res.second << " " << res.first.get_emoji() << "\n";
+    }
+    cout << "Offered development cards: \n";
+    for (auto &dev : offer_dev) {
+        cout << "\t" << dev.second << " " << dev.first->emoji() << "\n";
+    }
+
+    cout << "Requested resources: \n";
+    for (auto &res : request_res) {
+        cout << "\t" << res.second << " " << res.first.get_emoji() << "\n";
+    }
+
+    cout << "Requested development cards: \n";
+    for (auto &dev : request_dev) {
+        cout << "\t" << dev.second << " " << dev.first->emoji() << "\n";
+    }
+
+    cout << "Your resources: \n";
+    display_resources();
+
+    cout << "Your development cards: \n";
+    display_dev_cards();
+
+    cout << "Do you accept the trade? (y/n)\n";
+    char choice;
+    cin >> choice;
+    return choice == 'y' || choice == 'Y';
+}
+
+bool Player::operator==(const Player &player) const {
+    return this->color == player.color;
 }

@@ -24,7 +24,6 @@ class LandVertex {
     LandVertex() = default;
     LandVertex(int id);
 
-
     void set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2, LandVertex* vertex3);
 
     void set_adjacent_edge(RoadEdge* edge1, RoadEdge* edge2, RoadEdge* edge3);
@@ -47,4 +46,6 @@ class LandVertex {
     bool get_isCity();
 
     void upgrade_to_city();
+
+    std::string get_settlement_string();
 };

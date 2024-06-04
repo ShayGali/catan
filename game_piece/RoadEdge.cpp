@@ -33,3 +33,10 @@ Player* RoadEdge::get_owner() {
 int RoadEdge::get_id() {
     return this->id;
 }
+
+std::string RoadEdge::get_color_code() {
+    if (this->owner == nullptr) {
+        return "\033[1;37m"; // White
+    }
+    return this->owner->get_color_code();
+}
