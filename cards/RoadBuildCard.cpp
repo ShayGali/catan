@@ -7,3 +7,7 @@ CardType RoadBuildCard::get_type() {
 std::string RoadBuildCard::get_description() {
     return "You may immediately place 2 free roads";
 }
+
+std::string RoadBuildCard::emoji() {
+    return "🛣️";
+}
