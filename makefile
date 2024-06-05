@@ -7,13 +7,12 @@ CARDS_OBJECTS=cards/KngihtCard.o cards/MonopolyCard.o cards/RoadBuildCard.o card
 
 PROG=catan
 
-.PHONY: all clean run game_piece player cards catan
+.PHONY: clean run game_piece player cards catan
 
 catan: Catan.o main.o game_piece player cards
 	$(CXX) $(CXXFLAGS) -o catan Catan.o main.o $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 
-
-run: ./$(PROG)
+run: $(PROG)
 	./$(PROG)
 
 Catan.o: Catan.cpp
