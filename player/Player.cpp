@@ -276,105 +276,105 @@ void Player::make_trade(Catan &game) {
     throw std::logic_error("Not implemented");
 }
 
-// void Player::make_trade(Catan &game) {
-//     throw std::logic_error("Not implemented");
+void Player::make_trade(Catan &game) {
+    throw std::logic_error("Not implemented");
 
-//     vector<pair<resource, int>> offer_res;
-//     vector<pair<Card *, int>> offer_dev;
+    vector<pair<resource, int>> offer_res;
+    vector<pair<Card *, int>> offer_dev;
 
-//     cout << "Choose a offer resource (enter -1 to end the resources selection)\n";
-//     display_resources();
+    cout << "Choose a offer resource (enter -1 to end the resources selection)\n";
+    display_resources();
 
-//     int choice;
-//     while (true) {
-//         cin >> choice;
-//         if (choice == -1) {
-//             break;
-//         }
-//         if (choice < 0 || choice > 4) {
-//             cout << "Invalid choice\n";
-//             continue;
-//         }
-//         cout << "Enter the amount of the resource\n";
-//         int amount;
-//         cin >> amount;
-//         if (amount > resourceCount[choice]) {
-//             cout << "You don't have enough resources\n";
-//             continue;
-//         }
-//         offer_res.push_back({resource::from_int(choice), amount});
-//     }
+    int choice;
+    while (true) {
+        cin >> choice;
+        if (choice == -1) {
+            break;
+        }
+        if (choice < 0 || choice > 4) {
+            cout << "Invalid choice\n";
+            continue;
+        }
+        cout << "Enter the amount of the resource\n";
+        int amount;
+        cin >> amount;
+        if (amount > resourceCount[choice]) {
+            cout << "You don't have enough resources\n";
+            continue;
+        }
+        offer_res.push_back({resource::from_int(choice), amount});
+    }
 
-//     cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
-//     for(int i = 0; i < devCards.size(); i++) {
-//         cout << i << ". " << devCards[i]->emoji() << "\n";
-//     }
+    cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
+    for(int i = 0; i < devCards.size(); i++) {
+        cout << i << ". " << devCards[i]->emoji() << "\n";
+    }
 
-//     vector<bool> selected(devCards.size(), false);
+    vector<bool> selected(devCards.size(), false);
 
-//     while (true) {
-//         cin >> choice;
-//         if (choice == -1) {
-//             break;
-//         }
-//         if (choice < 0 || choice > devCards.size()) {
-//             cout << "Invalid choice\n";
-//             continue;
-//         }
-//         cout << "Enter development card index\n";
-//         int index
-//         ;
-//         cin >> index;
-//         if (index > devCards.size() || index < 0) {
-//             cout << "Invalid index\n";
-//             continue;
-//         }
-//         if (selected[index]) {
-//             cout << "You already selected this card\n";
-//             continue;
-//         }
-//         selected[index] = true;
-//         offer_dev.push_back({devCards[index], 1});
-//     }
+    while (true) {
+        cin >> choice;
+        if (choice == -1) {
+            break;
+        }
+        if (choice < 0 || choice > devCards.size()) {
+            cout << "Invalid choice\n";
+            continue;
+        }
+        cout << "Enter development card index\n";
+        int index
+        ;
+        cin >> index;
+        if (index > devCards.size() || index < 0) {
+            cout << "Invalid index\n";
+            continue;
+        }
+        if (selected[index]) {
+            cout << "You already selected this card\n";
+            continue;
+        }
+        selected[index] = true;
+        offer_dev.push_back({devCards[index], 1});
+    }
 
-//     vector<pair<resource, int>> request_res;
-//     vector<pair<Card *, int>> request_dev;
+    vector<pair<resource, int>> request_res;
+    vector<pair<CardType, int>> request_dev;
 
-//     cout << "Choose a request resource (enter -1 to end the resources selection)\n";
-//     cout << "1. Wood, 2. Clay, 3. Sheep, 4. Wheat, 5. Stone\n";
-//     while (true) {
-//         cin >> choice;
-//         if (choice == -1) {
-//             break;
-//         }
-//         if (choice < 0 || choice > 4) {
-//             cout << "Invalid choice\n";
-//             continue;
-//         }
-//         cout << "Enter the amount of the resource\n";
-//         int amount;
-//         cin >> amount;
-//         request_res.push_back({resource::from_int(choice), amount});
-//     }
+    cout << "Choose a request resource (enter -1 to end the resources selection)\n";
+    cout << "1. Wood, 2. Clay, 3. Sheep, 4. Wheat, 5. Stone\n";
+    while (true) {
+        cin >> choice;
+        if (choice == -1) {
+            break;
+        }
+        if (choice < 0 || choice > 4) {
+            cout << "Invalid choice\n";
+            continue;
+        }
+        cout << "Enter the amount of the resource\n";
+        int amount;
+        cin >> amount;
+        request_res.push_back({resource::from_int(choice), amount});
+    }
 
-//     cout << "Choose a request development card (enter -1 to end the development cards selection)\n";
-//     cout << "1. Knight, 2. Road Building, 3. Year of Plenty, 4. Monopoly\n";
-//     while (true) {
-//         cin >> choice;
-//         if (choice == -1) {
-//             break;
-//         }
-//         if (choice < 0 || choice > 4) {
-//             cout << "Invalid choice\n";
-//             continue;
-//         }
-//         cout << "Enter the amount of the development card\n";
-//         int amount;
-//         cin >> amount;
-//         request_dev.push_back({Card::from_int(choice), amount});
-//     }
+    cout << "Choose a request development card (enter -1 to end the development cards selection)\n";
+    cout << "1. Knight, 2. Road Building, 3. Year of Plenty, 4. Monopoly\n";
+    while (true) {
+        cin >> choice;
+        if (choice == -1) {
+            break;
+        }
+        if (choice < 0 || choice > 4) {
+            cout << "Invalid choice\n";
+            continue;
+        }
+        cout << "Enter the amount of the development card\n";
+        int amount;
+        cin >> amount;
+        request_dev.push_back({Card::from_int(choice), amount});
+    }
 
-// }
+}
 
 bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<pair<Card *, int>> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<Card *, int>> &request_dev) {
     cout << "Player " << get_color() << " received a trade request from player " << trader.get_color() << "\n";

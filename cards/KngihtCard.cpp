@@ -12,7 +12,3 @@ std::string KnightCard::get_description() {
 std::string KnightCard::emoji() {
     return "🗡️";
 }
-
-void KnightCard::use(Catan& game, Player& player) {
-    throw std::runtime_error("Not implemented");
-}

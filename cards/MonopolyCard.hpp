@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Card.hpp"
+#include "PromotionCard.hpp"
 
-class MonopolyCard : public Card {
+class MonopolyCard : public PromotionCard {
     CardType get_type() override;
     std::string get_description() override;
     std::string emoji() override;

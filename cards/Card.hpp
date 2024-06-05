@@ -18,6 +18,22 @@ class Card {
     virtual CardType get_type() = 0;
     virtual std::string get_description() = 0;
     virtual std::string emoji() = 0;
-    virtual void use(Catan& game, Player& player) = 0;
     virtual ~Card() = default;
+
+    static CardType from_int(int type) {
+        switch (type) {
+            case 0:
+                return CardType::KNIGHT;
+            case 1:
+                return CardType::VICTORY_POINT;
+            case 2:
+                return CardType::ROAD_BUILDING;
+            case 3:
+                return CardType::MONOPOLY;
+            case 4:
+                return CardType::YEAR_OF_PLENTY;
+            default:
+                throw std::invalid_argument("Invalid card type");
+        }
+    }
 };

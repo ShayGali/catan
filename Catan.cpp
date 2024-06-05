@@ -163,7 +163,6 @@ void Catan::place_city(int vertex_id, Player& player) {
 
     LandVertex& vertex = vertices[vertex_id];
 
-
     // check if the vertex is the player's settlement
     if (vertex.get_owner() == nullptr || *(vertex.get_owner()) != player) {
         throw std::invalid_argument("Vertex is not owned by the player!");
@@ -322,14 +321,14 @@ Card* Catan::get_dev_card(Player& player) {
     // remove card from deck
     dev_cards.erase(dev_cards.begin() + rand_index);
 
-    if (card->get_type() == CardType::KNIGHT) {
+    if (dynamic_cast<KnightCard*>(card) != nullptr) {
         player.add_knight();
         if (player.get_knights() >= 3) {
             player.add_victory_points(2);
         }
     }
 
-    if (card->get_type() == CardType::VICTORY_POINT) {
+    if (dynamic_cast<VictoryPointCard*>(card) != nullptr) {
         player.add_victory_points(1);
     }
 
@@ -337,7 +336,12 @@ Card* Catan::get_dev_card(Player& player) {
 }
 
 void Catan::use_dev_card(Player& player, Card* card) {
-    card->use(*this, player);
+    // check if the card is promotion card
+    PromotionCard* cast_card = dynamic_cast<PromotionCard*>(card);
+    if (cast_card == nullptr) {
+        throw std::invalid_argument("card is not PromotionCard");
+    }
+    cast_card->use(*this, player);
 }
 
 void Catan::init_game() {
