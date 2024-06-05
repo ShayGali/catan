@@ -1,4 +1,5 @@
 #pragma once
+#include <stdexcept>
 #include <string>
 enum class CardType {
     KNIGHT,
@@ -17,6 +18,6 @@ class Card {
     virtual CardType get_type() = 0;
     virtual std::string get_description() = 0;
     virtual std::string emoji() = 0;
-    // virtual void play(Catan& game, Player& player) = 0;
+    virtual void use(Catan& game, Player& player) = 0;
     virtual ~Card() = default;
 };

@@ -12,7 +12,6 @@
 constexpr int NUM_PLAYERS = 3;
 class Catan {
    private:
-
     int current_player_index;
 
     void init_game();
@@ -32,6 +31,7 @@ class Catan {
     void play_turn();
     void print_cell_status(int cell_id);
     void display_board();
+    void display_board_ids();
     Player* is_game_over();
 
     void place_settlement(int vertex_id, Player& player, bool first_round = false);
@@ -44,6 +44,7 @@ class Catan {
     void return_resources_on_seven_roll();
 
     Card* get_dev_card(Player& player);
+    void use_dev_card(Player& player, Card* card);
 
     void trade(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<Card*, int>>& request_dev);
 };

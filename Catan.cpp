@@ -32,7 +32,11 @@ void Catan::first_round() {
     for (int i = NUM_PLAYERS - 1; i >= 0; i--) {
         if (i != NUM_PLAYERS - 1)
             cout << players[i].get_color() << " turn\n";
-        players[i].place_settlement(*this, true);
+        int vertex_id = players[i].place_settlement(*this, true);
+        LandVertex& vertex = vertices[vertex_id];
+        for (int j = 0; j < 3; j++) {
+            players[i].add_resource(vertex.get_resources()[j].first, 1);
+        }
         display_board();
         players[i].place_road(*this, true);
         display_board();
@@ -41,11 +45,10 @@ void Catan::first_round() {
 
 void Catan::play_turn() {
     display_board();
-    cout << current_player_index << "\n";
     Player& current_player = players[current_player_index];
     cout << current_player.get_color() << " turn\n";
     current_player.play_turn(*this);
-    current_player_index = (current_player_index + 1) % 3;
+    current_player_index = (current_player_index + 1) % NUM_PLAYERS;
 }
 
 Player* Catan::is_game_over() {
@@ -274,7 +277,7 @@ void Catan::give_resources(int dices_sum) {
     for (int i = 0; i < 54; i++) {
         for (int j = 0; j < 3; j++) {
             if (vertices[i].get_resources()[j].second == dices_sum && vertices[i].get_owner() != nullptr) {
-                if(vertices[i].get_isCity()){
+                if (vertices[i].get_isCity()) {
                     cout << "Player " << vertices[i].get_owner()->get_color() << " gets 2 " << vertices[i].get_resources()[j].first.get_emoji() << " from vertex " << i << "\n";
                     vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 2);
                 } else {
@@ -330,7 +333,10 @@ Card* Catan::get_dev_card(Player& player) {
     }
 
     return card;
-    return nullptr;
+}
+
+void Catan::use_dev_card(Player& player, Card* card) {
+    card->use(*this, player);
 }
 
 void Catan::init_game() {
@@ -351,6 +357,15 @@ void Catan::init_game() {
 
     // seed random number generator
 }
+
+// Player* Catan::start_game() {
+//     Player* winner;
+//     first_round();
+//     while ((winner = is_game_over()) == nullptr) {
+//         play_turn();
+//     }
+//     return winner;
+// }
 
 void Catan::init_vertices() {
     // first vertex row
@@ -773,7 +788,6 @@ void Catan::init_dev_cards() {
 }
 
 void Catan::display_board() {
-    // print first row
     cout << "            " << vertices[0].get_settlement_string() << "      " << vertices[1].get_settlement_string() << "       " << vertices[2].get_settlement_string() << "\n"
          << "          " << edges[0].get_color_code() << "/   " << edges[1].get_color_code() << "\\  " << edges[2].get_color_code() << "/   " << edges[3].get_color_code() << "\\   " << edges[4].get_color_code() << "/   " << edges[5].get_color_code() << "\\\033[0m\n"
          << "         " << vertices[3].get_settlement_string() << "     " << vertices[4].get_settlement_string() << "       " << vertices[5].get_settlement_string() << "      " << vertices[6].get_settlement_string() << "\n"
@@ -782,10 +796,10 @@ void Catan::display_board() {
          << "       " << edges[10].get_color_code() << "/   " << edges[11].get_color_code() << "\\ " << edges[12].get_color_code() << "/   " << edges[13].get_color_code() << "\\   " << edges[14].get_color_code() << "/   " << edges[15].get_color_code() << "\\  " << edges[16].get_color_code() << "/   " << edges[17].get_color_code() << "\\\033[0m\n"
          << "      " << vertices[11].get_settlement_string() << "     " << vertices[12].get_settlement_string() << "      " << vertices[13].get_settlement_string() << "      " << vertices[14].get_settlement_string() << "      " << vertices[15].get_settlement_string() << "\n"
          << "      " << edges[18].get_color_code() << "| " << vertices[7].get_resources()[0].first.get_emoji() << edges[19].get_color_code() << "  |  " << vertices[8].get_resources()[0].first.get_emoji() << edges[20].get_color_code() << "  |  " << vertices[9].get_resources()[0].first.get_emoji() << edges[21].get_color_code() << "  |  " << vertices[10].get_resources()[0].first.get_emoji() << "  " << edges[22].get_color_code() << "|\033[0m\n"
-         << "      " << vertices[16].get_settlement_string() << " " << vertices[7].get_resources()[0].second << "  " << vertices[17].get_settlement_string() << "   " << vertices[8].get_resources()[0].second << "   " << vertices[18].get_settlement_string() << "  " << vertices[9].get_resources()[0].second << "  " << vertices[19].get_settlement_string() << "  " << vertices[10].get_resources()[0].second << "  " << vertices[20].get_settlement_string() << "\n"
+         << "      " << vertices[16].get_settlement_string() << " " << vertices[7].get_resources()[0].second << "  " << vertices[17].get_settlement_string() << "   " << vertices[8].get_resources()[0].second << "   " << vertices[18].get_settlement_string() << "  " << vertices[9].get_resources()[0].second << "  " << vertices[19].get_settlement_string() << "  " << vertices[10].get_resources()[0].second << "   " << vertices[20].get_settlement_string() << "\n"
          << "    " << edges[23].get_color_code() << "/   " << edges[24].get_color_code() << "\\ " << edges[25].get_color_code() << "/   " << edges[26].get_color_code() << "\\   " << edges[27].get_color_code() << "/   " << edges[28].get_color_code() << "\\ " << edges[29].get_color_code() << "/   " << edges[30].get_color_code() << "\\  " << edges[31].get_color_code() << "/   " << edges[32].get_color_code() << "\\\033[0m\n"
          << "   " << vertices[21].get_settlement_string() << "     " << vertices[22].get_settlement_string() << "      " << vertices[23].get_settlement_string() << "      " << vertices[24].get_settlement_string() << "     " << vertices[25].get_settlement_string() << "      " << vertices[26].get_settlement_string() << "\n"
-         << "   " << edges[33].get_color_code() << "| " << vertices[16].get_resources()[0].first.get_emoji() << edges[34].get_color_code() << "  |  " << vertices[17].get_resources()[0].first.get_emoji() << edges[35].get_color_code() << "  |  " << vertices[18].get_resources()[0].first.get_emoji() << edges[36].get_color_code() << "   | " << vertices[19].get_resources()[0].first.get_emoji() << edges[37].get_color_code() << "  | " << vertices[20].get_resources()[0].first.get_emoji() << "   " << edges[38].get_color_code() << "|\033[0m\n"
+         << "   " << edges[33].get_color_code() << "| " << vertices[16].get_resources()[0].first.get_emoji() << edges[34].get_color_code() << "  |  " << vertices[17].get_resources()[0].first.get_emoji() << edges[35].get_color_code() << "  |  " << vertices[18].get_resources()[0].first.get_emoji() << edges[36].get_color_code() << "   | " << vertices[19].get_resources()[0].first.get_emoji() << edges[37].get_color_code() << "  |  " << vertices[20].get_resources()[0].first.get_emoji() << "  " << edges[38].get_color_code() << "|\033[0m\n"
          << "   " << vertices[27].get_settlement_string() << "  " << vertices[16].get_resources()[0].second << "  " << vertices[28].get_settlement_string() << "  " << vertices[17].get_resources()[0].second << "  " << vertices[29].get_settlement_string() << "   " << vertices[18].get_resources()[0].second << "  " << vertices[30].get_settlement_string() << "  " << vertices[19].get_resources()[0].second << "  " << vertices[31].get_settlement_string() << "   " << vertices[20].get_resources()[0].second << "  " << vertices[32].get_settlement_string() << "\n"
          << "    " << edges[38].get_color_code() << "\\   " << edges[40].get_color_code() << "/ " << edges[41].get_color_code() << "\\    " << edges[42].get_color_code() << "/   " << edges[43].get_color_code() << "\\ " << edges[44].get_color_code() << "/   " << edges[45].get_color_code() << "\\ " << edges[46].get_color_code() << "/   " << edges[47].get_color_code() << "\\   " << edges[48].get_color_code() << "/\033[0m\n"
          << "      " << vertices[33].get_settlement_string() << "     " << vertices[34].get_settlement_string() << "      " << vertices[35].get_settlement_string() << "      " << vertices[36].get_settlement_string() << "      " << vertices[37].get_settlement_string() << "\n"
@@ -797,4 +811,30 @@ void Catan::display_board() {
          << "         " << vertices[47].get_settlement_string() << "   " << vertices[39].get_resources()[0].second << "  " << vertices[48].get_settlement_string() << "   " << vertices[40].get_resources()[0].second << "  " << vertices[49].get_settlement_string() << "   " << vertices[41].get_resources()[0].second << " " << vertices[50].get_settlement_string() << "\n"
          << "           " << edges[66].get_color_code() << "\\   " << edges[67].get_color_code() << "/  " << edges[68].get_color_code() << "\\   " << edges[69].get_color_code() << "/  " << edges[70].get_color_code() << "\\   " << edges[71].get_color_code() << "/\033[0m\n"
          << "             " << vertices[51].get_settlement_string() << "      " << vertices[52].get_settlement_string() << "       " << vertices[53].get_settlement_string() << "\n";
+}
+
+void Catan::display_board_ids() {
+    cout << "            " << vertices[0].get_id() << "      " << vertices[1].get_id() << "       " << vertices[2].get_id() << "\n"
+         << "          " << edges[0].get_id() << "/   " << edges[1].get_id() << "\\  " << edges[2].get_id() << "/   " << edges[3].get_id() << "\\   " << edges[4].get_id() << "/   " << edges[5].get_id() << "\\\n"
+         << "         " << vertices[3].get_id() << "     " << vertices[4].get_id() << "       " << vertices[5].get_id() << "      " << vertices[6].get_id() << "\n"
+         << "         " << edges[6].get_id() << "| " << vertices[0].get_id() << edges[7].get_id() << "  |" << "  " << vertices[1].get_id() << edges[8].get_id() << "   |  " << vertices[2].get_id() << "  " << edges[9].get_id() << "|\n"
+         << "         " << vertices[7].get_id() << " " << vertices[0].get_id() << "  " << vertices[8].get_id() << "   " << vertices[1].get_id() << "   " << vertices[9].get_id() << "   " << vertices[2].get_id() << "  " << vertices[10].get_id() << "\n"
+         << "       " << edges[10].get_id() << "/   " << edges[11].get_id() << "\\ " << edges[12].get_id() << "/   " << edges[13].get_id() << "\\   " << edges[14].get_id() << "/   " << edges[15].get_id() << "\\  " << edges[16].get_id() << "/   " << edges[17].get_id() << "\\\n"
+         << "      " << vertices[11].get_id() << "     " << vertices[12].get_id() << "      " << vertices[13].get_id() << "      " << vertices[14].get_id() << "      " << vertices[15].get_id() << "\n"
+         << "      " << edges[18].get_id() << "| " << vertices[7].get_id() << edges[19].get_id() << "  |  " << vertices[8].get_id() << edges[20].get_id() << "  |  " << vertices[9].get_id() << edges[21].get_id() << "  |  " << vertices[10].get_id() << "  " << edges[22].get_id() << "|\n"
+         << "      " << vertices[16].get_id() << " " << vertices[7].get_id() << "  " << vertices[17].get_id() << "   " << vertices[8].get_id() << "   " << vertices[18].get_id() << "  " << vertices[9].get_id() << "  " << vertices[19].get_id() << "  " << vertices[10].get_id() << "   " << vertices[20].get_id() << "\n"
+         << "    " << edges[23].get_id() << "/   " << edges[24].get_id() << "\\ " << edges[25].get_id() << "/   " << edges[26].get_id() << "\\   " << edges[27].get_id() << "/   " << edges[28].get_id() << "\\ " << edges[29].get_id() << "/   " << edges[30].get_id() << "\\  " << edges[31].get_id() << "/   " << edges[32].get_id() << "\\\n"
+         << "   " << vertices[21].get_id() << "     " << vertices[22].get_id() << "      " << vertices[23].get_id() << "      " << vertices[24].get_id() << "     " << vertices[25].get_id() << "      " << vertices[26].get_id() << "\n"
+         << "   " << edges[33].get_id() << "| " << vertices[16].get_id() << edges[34].get_id() << "  |  " << vertices[17].get_id() << edges[35].get_id() << "  |  " << vertices[18].get_id() << edges[36].get_id() << "   | " << vertices[19].get_id() << edges[37].get_id() << "  |  " << vertices[20].get_id() << "  " << edges[38].get_id() << "|\n"
+         << "   " << vertices[27].get_id() << "  " << vertices[16].get_id() << "  " << vertices[28].get_id() << "  " << vertices[17].get_id() << "  " << vertices[29].get_id() << "   " << vertices[18].get_id() << "  " << vertices[30].get_id() << "  " << vertices[19].get_id() << "  " << vertices[31].get_id() << "   " << vertices[20].get_id() << "  " << vertices[32].get_id() << "\n"
+         << "    " << edges[38].get_id() << "\\   " << edges[40].get_id() << "/ " << edges[41].get_id() << "\\    " << edges[42].get_id() << "/   " << edges[43].get_id() << "\\ " << edges[44].get_id() << "/   " << edges[45].get_id() << "\\ " << edges[46].get_id() << "/   " << edges[47].get_id() << "\\   " << edges[48].get_id() << "/\n"
+         << "      " << vertices[33].get_id() << "     " << vertices[34].get_id() << "      " << vertices[35].get_id() << "      " << vertices[36].get_id() << "      " << vertices[37].get_id() << "\n"
+         << "      " << edges[49].get_id() << "|  " << vertices[28].get_id() << edges[50].get_id() << "  |  " << vertices[29].get_id() << edges[51].get_id() << "  |  " << vertices[30].get_id() << edges[52].get_id() << "  |  " << vertices[31].get_id() << edges[53].get_id() << "  |\n"
+         << "      " << vertices[38].get_id() << "  " << vertices[28].get_id() << "  " << vertices[39].get_id() << "   " << vertices[29].get_id() << "  " << vertices[40].get_id() << "   " << vertices[30].get_id() << "  " << vertices[41].get_id() << "   " << vertices[31].get_id() << "  " << vertices[42].get_id() << "\n"
+         << "       " << edges[54].get_id() << "\\   " << edges[55].get_id() << "/  " << edges[56].get_id() << "\\   " << edges[57].get_id() << "/  " << edges[58].get_id() << "\\   " << edges[59].get_id() << "/  " << edges[60].get_id() << "\\   " << edges[61].get_id() << "/\n"
+         << "         " << vertices[43].get_id() << "      " << vertices[44].get_id() << "      " << vertices[45].get_id() << "      " << vertices[46].get_id() << "\n"
+         << "         " << edges[62].get_id() << "|  " << vertices[39].get_id() << edges[63].get_id() << "  |  " << vertices[40].get_id() << edges[64].get_id() << "  |  " << vertices[41].get_id() << edges[65].get_id() << "  |\n"
+         << "         " << vertices[47].get_id() << "   " << vertices[39].get_id() << "  " << vertices[48].get_id() << "   " << vertices[40].get_id() << "  " << vertices[49].get_id() << "   " << vertices[41].get_id() << " " << vertices[50].get_id() << "\n"
+         << "           " << edges[66].get_id() << "\\   " << edges[67].get_id() << "/  " << edges[68].get_id() << "\\   " << edges[69].get_id() << "/  " << edges[70].get_id() << "\\   " << edges[71].get_id() << "/\n"
+         << "             " << vertices[51].get_id() << "      " << vertices[52].get_id() << "       " << vertices[53].get_id() << "\n";
 }

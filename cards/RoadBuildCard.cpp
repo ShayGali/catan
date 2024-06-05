@@ -11,3 +11,7 @@ std::string RoadBuildCard::get_description() {
 std::string RoadBuildCard::emoji() {
     return "🛣️";
 }
+
+void RoadBuildCard::use(Catan& game, Player& player) {
+    throw std::runtime_error("Not implemented");
+}

@@ -11,3 +11,7 @@ std::string MonopolyCard::get_description() {
 std::string MonopolyCard::emoji() {
     return "🏦";
 }
+
+void MonopolyCard::use(Catan& game, Player& player) {
+    throw std::runtime_error("Not implemented");
+}

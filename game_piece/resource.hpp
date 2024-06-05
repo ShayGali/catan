@@ -2,6 +2,10 @@
 
 #include <string>
 // https://stackoverflow.com/questions/21295935/can-a-c-enum-class-have-methods
+
+/**
+ * @brief Enum class to represent the resources in the game.
+ */
 class resource {
    public:
     enum Value {
@@ -35,6 +39,27 @@ class resource {
                 return "";
         }
         return "";
+    }
+
+    static resource from_int(int value) {
+        switch (value) {
+            case 0:
+                return resource(resource::Value::WOOD);
+            case 1:
+                return resource(resource::Value::CLAY);
+            case 2:
+                return resource(resource::Value::SHEEP);
+            case 3:
+                return resource(resource::Value::WHEAT);
+            case 4:
+                return resource(resource::Value::STONE);
+            case 5:
+                return resource(resource::Value::DESERT);
+            case 6:
+                return resource(resource::Value::NONE);
+            default:
+                throw std::invalid_argument("Invalid resource value");
+        }
     }
 
     // Allow switch and comparisons.

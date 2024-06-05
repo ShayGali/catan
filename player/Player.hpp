@@ -49,9 +49,9 @@ class Player {
 
 
     void display_dev_cards();
-    void use_dev_card(int card_index);
+    void use_dev_card(Catan& game);
 
-    void place_settlement(Catan& game, bool first_round = false);
+    int place_settlement(Catan& game, bool first_round = false);
     void place_road(Catan& game, bool first_round = false);
     void place_city(Catan& game);
 

@@ -11,3 +11,7 @@ std::string VictoryPointCard::get_description() {
 std::string VictoryPointCard::emoji() {
     return "🏆";
 }
+
+void VictoryPointCard::use(Catan& game, Player& player) {
+    throw std::runtime_error("VictoryPointCard::use() should not be called");
+}
