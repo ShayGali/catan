@@ -137,6 +137,7 @@ int Player::get_resource_count(resource resource) {
 }
 
 void Player::add_resource(resource resource, int count) {
+    cout << "Player " << get_color() << " received " << count << " " << resource.get_emoji() << "\n";
     if (resource == resource::NONE || resource == resource::DESERT)
         return;
     resourceCount[static_cast<int>(resource)] += count;
@@ -477,8 +478,12 @@ int Player::get_dev_card_count(const CardType &type) {
     return count;
 }
 
-bool Player::operator==(const Player &player) const {
-    return this->color == player.color;
+bool Player::operator==(const Player &other) const {
+    return this->color == other.color;
+}
+
+bool Player::operator!=(const Player &other) const {
+    return !(this == other);
 }
 
 int Player::get_total_resources() {

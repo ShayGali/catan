@@ -47,7 +47,6 @@ class Player {
     void display_resources();
     void return_resources_on_seven_roll();
 
-
     void display_dev_cards();
     void use_dev_card(Catan& game);
 
@@ -65,5 +64,6 @@ class Player {
     int get_knights();
     int get_dev_card_count(const CardType& type);
 
-    bool operator==(const Player& player) const;
+    bool operator==(const Player& other) const;
+    bool operator!=(const Player& other) const;
 };
