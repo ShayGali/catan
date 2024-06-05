@@ -274,10 +274,6 @@ void Player::place_city(Catan &game) {
 
 void Player::make_trade(Catan &game) {
     throw std::logic_error("Not implemented");
-}
-
-void Player::make_trade(Catan &game) {
-    throw std::logic_error("Not implemented");
 
     vector<pair<resource, int>> offer_res;
     vector<pair<Card *, int>> offer_dev;
@@ -306,7 +302,7 @@ void Player::make_trade(Catan &game) {
     }
 
     cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
-    for(int i = 0; i < devCards.size(); i++) {
+    for (int i = 0; i < devCards.size(); i++) {
         cout << i << ". " << devCards[i]->emoji() << "\n";
     }
 
@@ -322,8 +318,7 @@ void Player::make_trade(Catan &game) {
             continue;
         }
         cout << "Enter development card index\n";
-        int index
-        ;
+        int index;
         cin >> index;
         if (index > devCards.size() || index < 0) {
             cout << "Invalid index\n";
@@ -373,7 +368,6 @@ void Player::make_trade(Catan &game) {
         cin >> amount;
         request_dev.push_back({Card::from_int(choice), amount});
     }
-
 }
 
 bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<pair<Card *, int>> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<Card *, int>> &request_dev) {
@@ -468,11 +462,12 @@ void Player::add_dev_card(Card *card) {
 }
 
 int Player::get_dev_card_count(const CardType &type) {
+    throw std::logic_error("no im");
     int count = 0;
     for (int i = 0; i < devCards.size(); i++) {
-        if (devCards[i]->get_type() == type) {
-            count++;
-        }
+        // if (devCards[i]->get_type() == type) {
+        // count++;
+        // }
     }
     return count;
 }

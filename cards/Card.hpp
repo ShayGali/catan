@@ -15,7 +15,6 @@ class Player;
 
 class Card {
    public:
-    virtual CardType get_type() = 0;
     virtual std::string get_description() = 0;
     virtual std::string emoji() = 0;
     virtual ~Card() = default;
