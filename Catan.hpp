@@ -13,6 +13,10 @@ constexpr int NUM_PLAYERS = 3;
 class Catan {
    private:
     int current_player_index;
+    LandVertex vertices[54];
+    RoadEdge edges[72];
+    Player* players[3];
+    vector<Card*> dev_cards;
 
     void init_game();
     void init_vertices();
@@ -22,16 +26,12 @@ class Catan {
 
    public:
     ~Catan();
-    LandVertex vertices[54];
-    RoadEdge edges[72];
-    Player players[3];
-    vector<Card*> dev_cards;
     Catan(Player& player1, Player& player2, Player& player3);
     void first_round();
     void play_turn();
-    void print_cell_status(int cell_id);
+    Player* start_game();
+
     void display_board();
-    void display_board_ids();
     Player* is_game_over();
 
     void place_settlement(int vertex_id, Player& player, bool first_round = false);

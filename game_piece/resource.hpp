@@ -41,6 +41,10 @@ class resource {
         return "";
     }
 
+    int get_int() const {
+        return this->value;
+    }
+
     static resource from_int(int value) {
         switch (value) {
             case 0:

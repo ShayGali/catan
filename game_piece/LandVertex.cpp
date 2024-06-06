@@ -25,21 +25,6 @@ void LandVertex::set_resource(resource res1, int num1, resource res2, int num2, 
     this->resources[2] = std::make_pair(res3, num3);
 }
 
-void LandVertex::print_status() {
-    std::cout << "Vertex ID: " << this->id << std::endl;
-    std::cout << "resources: " << std::endl;
-    for (int i = 0; i < 3; i++) {
-        if (this->resources[i].first != resource::NONE) {
-            std::cout << "\t" << this->resources[i].first.get_emoji() << " : " << this->resources[i].second << std::endl;
-        }
-    }
-
-    if (this->owner != nullptr) {
-        std::cout << "Owner: " << this->owner->get_color() << std::endl;
-    } else {
-        std::cout << "No owner" << std::endl;
-    }
-}
 
 LandVertex* LandVertex::get_adjacent_vertex(int index) {
     return this->adjacentVertices[index];

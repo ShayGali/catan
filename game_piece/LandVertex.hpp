@@ -38,8 +38,6 @@ class LandVertex {
 
     int get_id();
 
-    void print_status();
-
     Player* get_owner();
     void set_owner(Player* player);
 

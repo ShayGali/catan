@@ -49,40 +49,44 @@ void Player::play_turn(Catan &game) {
 
         cin >> choice;
 
-        switch (choice) {
-            case '1': {
-                place_settlement(game);
-                break;
+        try {
+            switch (choice) {
+                case '1': {
+                    place_settlement(game);
+                    break;
+                }
+                case '2': {
+                    place_road(game);
+                    break;
+                }
+                case '3': {
+                    place_city(game);
+                    break;
+                }
+                case '4': {
+                    buy_dev_card(game);
+                    break;
+                }
+                case '5': {
+                    make_trade(game);
+                    break;
+                }
+                case '6':
+                    display_resources();
+                    break;
+                case '7':
+                    display_dev_cards();
+                    break;
+                case '8': {
+                    return;
+                }
+                default: {
+                    cout << "Invalid choice\n";
+                    break;
+                }
             }
-            case '2': {
-                place_road(game);
-                break;
-            }
-            case '3': {
-                place_city(game);
-                break;
-            }
-            case '4': {
-                buy_dev_card(game);
-                break;
-            }
-            case '5': {
-                make_trade(game);
-                break;
-            }
-            case '6':
-                display_resources();
-                break;
-            case '7':
-                display_dev_cards();
-                break;
-            case '8': {
-                return;
-            }
-            default: {
-                cout << "Invalid choice\n";
-                break;
-            }
+        } catch (std::exception &e) {
+            cout << e.what() << "\n";
         }
     }
 }
@@ -133,25 +137,24 @@ std::string Player::get_player_info() {
 }
 
 int Player::get_resource_count(resource resource) {
-    return resourceCount[static_cast<int>(resource)];
+    return resourceCount[resource.get_int()];
 }
 
 void Player::add_resource(resource resource, int count) {
     if (resource == resource::NONE || resource == resource::DESERT)
         return;
-    resourceCount[static_cast<int>(resource)] += count;
+    resourceCount[resource.get_int()] += count;
 }
 
 void Player::use_resource(resource resource, int count) {
-    if (resourceCount[static_cast<int>(resource)] < count) {
+    if (resourceCount[resource.get_int()] < count) {
         throw std::invalid_argument("Not enough resources");
     }
-    resourceCount[static_cast<int>(resource)] -= count;
+    resourceCount[resource.get_int()] -= count;
 }
 
 void Player::display_resources() {
     resource wood = resource::WOOD, clay = resource::CLAY, sheep = resource::SHEEP, wheat = resource::WHEAT, stone = resource::STONE;
-
     cout << "Resources: \n"
          << "\t" << wood.get_emoji() << ":" << resourceCount[0] << "\n"
          << "\t" << clay.get_emoji() << ":" << resourceCount[1] << "\n"
@@ -173,20 +176,17 @@ void Player::display_dev_cards() {
 }
 
 void Player::buy_dev_card(Catan &game) {
-    if (resourceCount[0] < 1 || resourceCount[2] < 1 || resourceCount[3] < 1) {
+    if (get_resource_count(resource::WHEAT) < 1 || get_resource_count(resource::SHEEP) < 1 || get_resource_count(resource::STONE) < 1) {
         cout << "Not enough resources to buy a development card\n";
-        return;
-    }
-    try {
-        game.get_dev_card(*this);
-    } catch (std::invalid_argument &e) {
-        cout << e.what() << "\n";
         return;
     }
 
     // Buy a random development card
     Card *card = game.get_dev_card(*this);
     devCards.push_back(card);
+
+    cout << "You got: " << card->emoji() << "\n";
+    cout << "Card description: " << card->get_description() << "\n";
 }
 
 int Player::place_settlement(Catan &game, bool first_round) {
@@ -495,11 +495,11 @@ void Player::return_resources_on_seven_roll() {
 
     display_resources();
     while (true) {
-        int sheep_count;
-        int wheat_count;
-        int stone_count;
-        int clay_count;
-        int wood_count;
+        int sheep_count = 0;
+        int wheat_count = 0;
+        int stone_count = 0;
+        int clay_count = 0;
+        int wood_count = 0;
         while (true) {
             if (get_resource_count(resource::WOOD) > 0) {
                 cout << "How many wood do you want to return?\n";
@@ -509,6 +509,8 @@ void Player::return_resources_on_seven_roll() {
                     continue;
                 }
 
+                break;
+            } else {
                 break;
             }
         }
@@ -523,6 +525,8 @@ void Player::return_resources_on_seven_roll() {
                 }
 
                 break;
+            } else {
+                break;
             }
         }
 
@@ -530,11 +534,13 @@ void Player::return_resources_on_seven_roll() {
             if (get_resource_count(resource::SHEEP) > 0) {
                 cout << "How many sheep do you want to return?\n";
                 cin >> sheep_count;
+                cout << sheep_count << "\n";
                 if (sheep_count > get_resource_count(resource::SHEEP)) {
                     cout << "You don't have enough sheep\n";
                     continue;
                 }
-
+                break;
+            } else {
                 break;
             }
         }
@@ -549,6 +555,8 @@ void Player::return_resources_on_seven_roll() {
                 }
 
                 break;
+            } else {
+                break;
             }
         }
 
@@ -562,8 +570,11 @@ void Player::return_resources_on_seven_roll() {
                 }
 
                 break;
+            } else {
+                break;
             }
         }
+
         int total_returned = wood_count + clay_count + sheep_count + wheat_count + stone_count;
         if (total_to_return != total_returned) {
             cout << "You must return exactly " << total_to_return << " resources\n";

@@ -10,7 +10,7 @@
 #include "cards/VictoryPointCard.hpp"
 #include "cards/YearOfPlentyCard.hpp"
 
-Catan::Catan(Player& player1, Player& player2, Player& player3) : players{player1, player2, player3} {
+Catan::Catan(Player& player1, Player& player2, Player& player3) : players{&player1, &player2, &player3} {
     init_game();
 }
 
@@ -23,43 +23,43 @@ Catan::~Catan() {
 void Catan::first_round() {
     display_board();
     for (int i = 0; i < NUM_PLAYERS; i++) {
-        cout << players[i].get_color() << " turn\n";
-        players[i].place_settlement(*this, true);
+        cout << players[i]->get_color() << " turn\n";
+        players[i]->place_settlement(*this, true);
         display_board();
-        players[i].place_road(*this, true);
+        players[i]->place_road(*this, true);
         display_board();
     }
     for (int i = NUM_PLAYERS - 1; i >= 0; i--) {
         if (i != NUM_PLAYERS - 1)
-            cout << players[i].get_color() << " turn\n";
-        int vertex_id = players[i].place_settlement(*this, true);
+            cout << players[i]->get_color() << " turn\n";
+        int vertex_id = players[i]->place_settlement(*this, true);
         LandVertex& vertex = vertices[vertex_id];
         for (int j = 0; j < 3; j++) {
-            players[i].add_resource(vertex.get_resources()[j].first, 1);
+            players[i]->add_resource(vertex.get_resources()[j].first, 1);
         }
         display_board();
-        players[i].place_road(*this, true);
+        players[i]->place_road(*this, true);
         display_board();
     }
 }
 
 void Catan::play_turn() {
     display_board();
-    Player& current_player = players[current_player_index];
-    cout << current_player.get_color() << " turn\n";
-    current_player.play_turn(*this);
+    Player* current_player = players[current_player_index];
+    cout << current_player->get_color() << " turn\n";
+    current_player->play_turn(*this);
     current_player_index = (current_player_index + 1) % NUM_PLAYERS;
 }
 
 Player* Catan::is_game_over() {
-    if (players[0].get_victory_points() >= 10) {
-        return &players[0];
+    if (players[0]->get_victory_points() >= 10) {
+        return players[0];
     }
-    if (players[1].get_victory_points() >= 10) {
-        return &players[1];
+    if (players[1]->get_victory_points() >= 10) {
+        return players[1];
     }
-    if (players[2].get_victory_points() >= 10) {
-        return &players[2];
+    if (players[2]->get_victory_points() >= 10) {
+        return players[2];
     }
     return nullptr;
 }
@@ -189,10 +189,6 @@ void Catan::play_dev_card(Player& player, Card& card) {
     throw std::logic_error("Not implemented");
 }
 
-void Catan::print_cell_status(int cell_id) {
-    vertices[cell_id].print_status();
-}
-
 void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<Card*, int>>& request_dev) {
     // check if the player has enough resources
     for (int i = 0; i < offer_res.size(); i++) {
@@ -211,16 +207,16 @@ void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, 
 
     // offer each player the offer
     for (int i = 0; i < NUM_PLAYERS; i++) {
-        if (players[i] == trader) {
+        if (*players[i] == trader) {
             continue;
         }
 
         // ask the player if they want to trade
-        if (players[i].trade_request(trader, offer_res, offer_dev, request_res, request_dev)) {
+        if (players[i]->trade_request(trader, offer_res, offer_dev, request_res, request_dev)) {
             // check if the player has enough resources
             for (int j = 0; j < request_res.size(); j++) {
-                if (players[i].get_resource_count(request_res[j].first) < request_res[j].second) {
-                    cout << "Player " << players[i].get_color() << " does not have enough resources to trade! (trying to trade " << request_res[j].second << " " << request_res[j].first.get_emoji() << ")\n";
+                if (players[i]->get_resource_count(request_res[j].first) < request_res[j].second) {
+                    cout << "Player " << players[i]->get_color() << " does not have enough resources to trade! (trying to trade " << request_res[j].second << " " << request_res[j].first.get_emoji() << ")\n";
                     return;
                 }
             }
@@ -237,22 +233,22 @@ void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, 
             // trade the resources
             for (int j = 0; j < offer_res.size(); j++) {
                 trader.use_resource(offer_res[j].first, offer_res[j].second);
-                players[i].add_resource(offer_res[j].first, offer_res[j].second);
+                players[i]->add_resource(offer_res[j].first, offer_res[j].second);
             }
 
             for (int j = 0; j < request_res.size(); j++) {
-                players[i].use_resource(request_res[j].first, request_res[j].second);
+                players[i]->use_resource(request_res[j].first, request_res[j].second);
                 trader.add_resource(request_res[j].first, request_res[j].second);
             }
 
             // trade the development cards
             for (int j = 0; j < offer_dev.size(); j++) {
                 trader.remove_dev_card(offer_dev[j].first);
-                players[i].add_dev_card(offer_dev[j].first);
+                players[i]->add_dev_card(offer_dev[j].first);
             }
 
             for (int j = 0; j < request_dev.size(); j++) {
-                players[i].remove_dev_card(request_dev[j].first);
+                players[i]->remove_dev_card(request_dev[j].first);
                 trader.add_dev_card(request_dev[j].first);
             }
         }
@@ -293,8 +289,8 @@ void Catan::give_resources(int dices_sum) {
 
 void Catan::return_resources_on_seven_roll() {
     for (int i = 0; i < NUM_PLAYERS; i++) {
-        if (players[i].get_total_resources() > 7) {
-            players[i].return_resources_on_seven_roll();
+        if (players[i]->get_total_resources() > 7) {
+            players[i]->return_resources_on_seven_roll();
         }
     }
 }
@@ -365,14 +361,14 @@ void Catan::init_game() {
     // seed random number generator
 }
 
-// Player* Catan::start_game() {
-//     Player* winner;
-//     first_round();
-//     while ((winner = is_game_over()) == nullptr) {
-//         play_turn();
-//     }
-//     return winner;
-// }
+Player* Catan::start_game() {
+    Player* winner;
+    first_round();
+    while ((winner = is_game_over()) == nullptr) {
+        play_turn();
+    }
+    return winner;
+}
 
 void Catan::init_vertices() {
     // first vertex row
@@ -820,30 +816,30 @@ void Catan::display_board() {
          << "             " << vertices[51].get_settlement_string() << "      " << vertices[52].get_settlement_string() << "       " << vertices[53].get_settlement_string() << "\n";
 }
 
-void Catan::display_board_ids() {
-    cout << "             " << vertices[0].get_id() << "        " << vertices[1].get_id() << "         " << vertices[2].get_id() << "\n"
-         << "          " << edges[0].get_id() << "/   " << edges[1].get_id() << "\\  " << edges[2].get_id() << "/   " << edges[3].get_id() << "\\   " << edges[4].get_id() << "/   " << edges[5].get_id() << "\\\n"
-         << "          " << vertices[3].get_id() << "       " << vertices[4].get_id() << "        " << vertices[5].get_id() << "        " << vertices[6].get_id() << "\n"
-         << "         " << edges[6].get_id() << "|      " << edges[7].get_id() << "|       " << edges[8].get_id() << "|       " << edges[9].get_id() << "|   \n"
-         << "          " << vertices[7].get_id() << "       " << vertices[8].get_id() << "        " << vertices[9].get_id() << "        " << vertices[10].get_id() << "\n"
-         << "      " << edges[10].get_id() << "/ " << edges[11].get_id() << "\\  " << edges[12].get_id() << "/ " << edges[13].get_id() << "\\   " << edges[14].get_id() << "/" << edges[15].get_id() << "\\  " << edges[16].get_id() << "/" << edges[17].get_id() << "\\\n"
-         << "     " << vertices[11].get_id() << "       " << vertices[12].get_id() << "      " << vertices[13].get_id() << "     " << vertices[14].get_id() << "      " << vertices[15].get_id() << "\n"
-         << "     " << edges[18].get_id() << "|    " << edges[19].get_id() << "|      " << edges[20].get_id() << "|    " << edges[21].get_id() << "|   \n"
-         << "     " << vertices[16].get_id() << "       " << vertices[17].get_id() << "        " << vertices[18].get_id() << "        " << vertices[19].get_id() << "      " << vertices[20].get_id() << "\n"
-         << "   " << edges[23].get_id() << "/ " << edges[24].get_id() << "\\  " << edges[25].get_id() << "/ " << edges[26].get_id() << "\\   " << edges[27].get_id() << "/" << edges[28].get_id() << "\\  " << edges[29].get_id() << "/" << edges[30].get_id() << "\\  " << edges[31].get_id() << "/" << edges[32].get_id() << "\\\n"
-         << "  " << vertices[21].get_id() << "       " << vertices[22].get_id() << "        " << vertices[23].get_id() << "        " << vertices[24].get_id() << "        " << vertices[25].get_id() << "        " << vertices[26].get_id() << "\n"
-         << "  " << edges[33].get_id() << "|      " << edges[34].get_id() << "|       " << edges[35].get_id() << "|       " << edges[36].get_id() << "|       " << edges[37].get_id() << "|   \n"
-         << "  " << vertices[27].get_id() << "       " << vertices[28].get_id() << "        " << vertices[29].get_id() << "        " << vertices[30].get_id() << "        " << vertices[31].get_id() << "        " << vertices[32].get_id() << "\n"
-         << "   " << edges[38].get_id() << "\\  " << edges[40].get_id() << "/ " << edges[41].get_id() << "\\   " << edges[42].get_id() << "/" << edges[43].get_id() << "\\  " << edges[44].get_id() << "/" << edges[45].get_id() << "\\  " << edges[46].get_id() << "/" << edges[47].get_id() << "\\  " << edges[48].get_id() << "/\n"
-         << "     " << vertices[33].get_id() << "        " << vertices[34].get_id() << "        " << vertices[35].get_id() << "        " << vertices[36].get_id() << "        " << vertices[37].get_id() << "\n"
-         << "     " << edges[49].get_id() << "|      " << edges[50].get_id() << "|       " << edges[51].get_id() << "|       " << edges[52].get_id() << "|       " << edges[53].get_id() << "|   \n"
-         << "     " << vertices[38].get_id() << "       " << vertices[39].get_id() << "        " << vertices[40].get_id() << "        " << vertices[41].get_id() << "        " << vertices[42].get_id() << "\n"
-         << "      " << edges[54].get_id() << "\\  " << edges[55].get_id() << "/  " << edges[56].get_id() << "\\   " << edges[57].get_id() << "/" << edges[58].get_id() << "\\  " << edges[59].get_id() << "/" << edges[60].get_id() << "\\  " << edges[61].get_id() << "/\n"
-         << "        " << vertices[43].get_id() << "        " << vertices[44].get_id() << "        " << vertices[45].get_id() << "        " << vertices[46].get_id() << "\n"
-         << "        " << edges[62].get_id() << "|       " << edges[63].get_id() << "|       " << edges[64].get_id() << "|       " << edges[65].get_id() << "|   \n"
-         << "        " << vertices[47].get_id() << "        " << vertices[48].get_id() << "        " << vertices[49].get_id() << "        " << vertices[50].get_id() << "\n"
-         << "          " << edges[66].get_id() << "\\  " << edges[67].get_id() << "/  " << edges[68].get_id() << "\\   " << edges[69].get_id() << "/" << edges[70].get_id() << "\\  " << edges[71].get_id() << "/\n"
-         << "            " << vertices[51].get_id() << "        " << vertices[52].get_id() << "         " << vertices[53].get_id() << "\n";
+// void Catan::display_board_ids() {
+//     cout << "             " << vertices[0].get_id() << "        " << vertices[1].get_id() << "         " << vertices[2].get_id() << "\n"
+//          << "          " << edges[0].get_id() << "/   " << edges[1].get_id() << "\\  " << edges[2].get_id() << "/   " << edges[3].get_id() << "\\   " << edges[4].get_id() << "/   " << edges[5].get_id() << "\\\n"
+//          << "          " << vertices[3].get_id() << "       " << vertices[4].get_id() << "        " << vertices[5].get_id() << "        " << vertices[6].get_id() << "\n"
+//          << "         " << edges[6].get_id() << "|      " << edges[7].get_id() << "|       " << edges[8].get_id() << "|       " << edges[9].get_id() << "|   \n"
+//          << "          " << vertices[7].get_id() << "       " << vertices[8].get_id() << "        " << vertices[9].get_id() << "        " << vertices[10].get_id() << "\n"
+//          << "      " << edges[10].get_id() << "/ " << edges[11].get_id() << "\\  " << edges[12].get_id() << "/ " << edges[13].get_id() << "\\   " << edges[14].get_id() << "/" << edges[15].get_id() << "\\  " << edges[16].get_id() << "/" << edges[17].get_id() << "\\\n"
+//          << "     " << vertices[11].get_id() << "       " << vertices[12].get_id() << "      " << vertices[13].get_id() << "     " << vertices[14].get_id() << "      " << vertices[15].get_id() << "\n"
+//          << "     " << edges[18].get_id() << "|    " << edges[19].get_id() << "|      " << edges[20].get_id() << "|    " << edges[21].get_id() << "|   \n"
+//          << "     " << vertices[16].get_id() << "       " << vertices[17].get_id() << "        " << vertices[18].get_id() << "        " << vertices[19].get_id() << "      " << vertices[20].get_id() << "\n"
+//          << "   " << edges[23].get_id() << "/ " << edges[24].get_id() << "\\  " << edges[25].get_id() << "/ " << edges[26].get_id() << "\\   " << edges[27].get_id() << "/" << edges[28].get_id() << "\\  " << edges[29].get_id() << "/" << edges[30].get_id() << "\\  " << edges[31].get_id() << "/" << edges[32].get_id() << "\\\n"
+//          << "  " << vertices[21].get_id() << "       " << vertices[22].get_id() << "        " << vertices[23].get_id() << "        " << vertices[24].get_id() << "        " << vertices[25].get_id() << "        " << vertices[26].get_id() << "\n"
+//          << "  " << edges[33].get_id() << "|      " << edges[34].get_id() << "|       " << edges[35].get_id() << "|       " << edges[36].get_id() << "|       " << edges[37].get_id() << "|   \n"
+//          << "  " << vertices[27].get_id() << "       " << vertices[28].get_id() << "        " << vertices[29].get_id() << "        " << vertices[30].get_id() << "        " << vertices[31].get_id() << "        " << vertices[32].get_id() << "\n"
+//          << "   " << edges[38].get_id() << "\\  " << edges[40].get_id() << "/ " << edges[41].get_id() << "\\   " << edges[42].get_id() << "/" << edges[43].get_id() << "\\  " << edges[44].get_id() << "/" << edges[45].get_id() << "\\  " << edges[46].get_id() << "/" << edges[47].get_id() << "\\  " << edges[48].get_id() << "/\n"
+//          << "     " << vertices[33].get_id() << "        " << vertices[34].get_id() << "        " << vertices[35].get_id() << "        " << vertices[36].get_id() << "        " << vertices[37].get_id() << "\n"
+//          << "     " << edges[49].get_id() << "|      " << edges[50].get_id() << "|       " << edges[51].get_id() << "|       " << edges[52].get_id() << "|       " << edges[53].get_id() << "|   \n"
+//          << "     " << vertices[38].get_id() << "       " << vertices[39].get_id() << "        " << vertices[40].get_id() << "        " << vertices[41].get_id() << "        " << vertices[42].get_id() << "\n"
+//          << "      " << edges[54].get_id() << "\\  " << edges[55].get_id() << "/  " << edges[56].get_id() << "\\   " << edges[57].get_id() << "/" << edges[58].get_id() << "\\  " << edges[59].get_id() << "/" << edges[60].get_id() << "\\  " << edges[61].get_id() << "/\n"
+//          << "        " << vertices[43].get_id() << "        " << vertices[44].get_id() << "        " << vertices[45].get_id() << "        " << vertices[46].get_id() << "\n"
+//          << "        " << edges[62].get_id() << "|       " << edges[63].get_id() << "|       " << edges[64].get_id() << "|       " << edges[65].get_id() << "|   \n"
+//          << "        " << vertices[47].get_id() << "        " << vertices[48].get_id() << "        " << vertices[49].get_id() << "        " << vertices[50].get_id() << "\n"
+//          << "          " << edges[66].get_id() << "\\  " << edges[67].get_id() << "/  " << edges[68].get_id() << "\\   " << edges[69].get_id() << "/" << edges[70].get_id() << "\\  " << edges[71].get_id() << "/\n"
+//          << "            " << vertices[51].get_id() << "        " << vertices[52].get_id() << "         " << vertices[53].get_id() << "\n";
 
-    ;
-}
+//     ;
+// }
