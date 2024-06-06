@@ -27,7 +27,14 @@ void place_things() {
     }
 }
 
-void demo_first_round(Catan& catan, Player& player1, Player& player2, Player& player3) {
+void demo_first_round() {
+
+    Player player1(PlayerColor::RED);
+    Player player2(PlayerColor::BLUE);
+    Player player3(PlayerColor::YELLOW);
+
+    Catan catan(player1, player2, player3);
+
     // 8 13 20 31 31 46 47 62 14 15 21 23
     catan.place_settlement(8, player1, true);
     catan.place_road(13, player1, true);
@@ -53,6 +60,8 @@ void demo_first_round(Catan& catan, Player& player1, Player& player2, Player& pl
     catan.place_road(23, player3, true);
 
     player3.add_resource(resource::WHEAT, 1);
+
+    cout << "Player 1: " << player1.get_victory_points() << endl;
 }
 
 void place_a_city(Catan& catan, Player& player) {
@@ -118,7 +127,8 @@ void real_game_with_demo_start() {
 }
 
 int main() {
-    real_game_with_demo_start();
+    demo_first_round();
+    // real_game_with_demo_start();
     // real_game();
     return 0;
 }

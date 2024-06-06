@@ -79,6 +79,7 @@ void Catan::place_settlement(int vertex_id, Player& player, bool first_round) {
     if (vertex.get_owner() != nullptr) {
         throw std::invalid_argument("Vertex is already occupied! (owner: " + vertex.get_owner()->get_color() + ")");
     }
+    
     if (!first_round) {
         // check if there is a road connected to the vertex
         for (int i = 0; i < 3; i++) {

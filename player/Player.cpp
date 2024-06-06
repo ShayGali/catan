@@ -1,6 +1,7 @@
 #include "Player.hpp"
 
 #include "../Catan.hpp"
+#include "../cards/PromotionCard.hpp"
 
 using std::cout, std::cin;
 
@@ -10,6 +11,12 @@ Player::Player(PlayerColor color) {
     knights_counter = 0;
     for (int i = 0; i < 5; i++) {
         resourceCount[i] = 0;
+    }
+}
+
+Player::~Player() {
+    for (auto card : devCards) {
+        delete card;
     }
 }
 
@@ -41,11 +48,11 @@ void Player::play_turn(Catan &game) {
         }
         if (choice == 'R') {
             display_resources();
-        }else if (choice == 'D') {
+        } else if (choice == 'D') {
             display_dev_cards();
-        }else if (choice == 'V') {
+        } else if (choice == 'V') {
             cout << "Victory points: " << victoryPoints << "\n";
-        }else if (choice == 'K') {
+        } else if (choice == 'K') {
             cout << "Knights: " << knights_counter << "\n";
         } else {
             cout << "Invalid choice\n";
@@ -468,6 +475,12 @@ void Player::use_dev_card(Catan &game) {
         return;
     }
     Card *card = devCards[index - 1];
+
+    // if the card is Promotion, we need to delete it from the player's devCards
+    if (dynamic_cast<PromotionCard *>(card)) {
+        devCards.erase(devCards.begin() + index - 1);
+        delete card;
+    }
 
     game.use_dev_card(*this, card);
 }

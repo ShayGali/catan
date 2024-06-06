@@ -29,7 +29,7 @@ class Player {
 
    public:
     Player(PlayerColor color);
-
+    ~Player();
     void play_turn(Catan& catan);
 
     string get_color();

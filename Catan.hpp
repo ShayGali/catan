@@ -14,10 +14,10 @@ constexpr int POINTS_TO_WIN = 10;
 class Catan {
    private:
     int current_player_index;
+    vector<Card*> dev_cards;
+    Player* players[3];
     LandVertex vertices[54];
     RoadEdge edges[72];
-    Player* players[3];
-    vector<Card*> dev_cards;
 
     void init_game();
     void init_vertices();
@@ -29,8 +29,9 @@ class Catan {
     ~Catan();
     Catan(Player& player1, Player& player2, Player& player3);
 
+    LandVertex* get_vertices(){ return vertices; }
+    RoadEdge* get_edges(){ return edges; }
     Player** get_players();
-
     void first_round();
     void play_turn();
     Player* start_game();
