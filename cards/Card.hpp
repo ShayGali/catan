@@ -13,9 +13,6 @@ enum class CardType {
     YEAR_OF_PLENTY
 };
 
-// Forward declaration
-class Catan;
-class Player;
 
 class Card {
    public:
