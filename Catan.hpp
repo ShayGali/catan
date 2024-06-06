@@ -26,8 +26,10 @@ class Catan {
     void init_dev_cards();
 
    public:
-    ~Catan();
     Catan(Player& player1, Player& player2, Player& player3);
+    Catan(const Catan& other);
+    ~Catan();
+    Catan& operator=(const Catan& other);
 
     LandVertex* get_vertices() { return vertices; }
     RoadEdge* get_edges() { return edges; }

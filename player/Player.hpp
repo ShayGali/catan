@@ -30,6 +30,9 @@ class Player {
    public:
     Player(PlayerColor color);
     ~Player();
+    Player& operator=(const Player& other);
+    Player(const Player& other);
+    
     void play_turn(Catan& catan);
 
     string get_color();
@@ -47,8 +50,6 @@ class Player {
     void display_resources();
     void return_resources_on_seven_roll();
 
-    void display_dev_cards();
-    void use_dev_card(Catan& game);
 
     int place_settlement(Catan& game, bool first_round = false);
     void place_road(Catan& game, bool first_round = false);
@@ -57,6 +58,8 @@ class Player {
     bool trade_request(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<Card*, int>>& request_dev);
     void make_trade(Catan& game);
 
+    void display_dev_cards();
+    void use_dev_card(Catan& game);
     void buy_dev_card(Catan& catan);
     void remove_dev_card(Card* card);
     void add_dev_card(Card* card);

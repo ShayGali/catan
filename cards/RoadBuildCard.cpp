@@ -14,6 +14,10 @@ CardType RoadBuildCard::type() {
     return CardType::ROAD_BUILDING;
 }
 
+Card* RoadBuildCard::clone() {
+    return new RoadBuildCard(*this);
+}
+
 void RoadBuildCard::use(Catan& game, Player& player) {
     std::cout << "You may immediately place 2 free roads.\n";
     player.place_road(game, true);

@@ -14,6 +14,10 @@ CardType YearOfPlentyCard::type() {
     return CardType::YEAR_OF_PLENTY;
 }
 
+Card* YearOfPlentyCard::clone() {
+    return new YearOfPlentyCard(*this);
+}
+
 void YearOfPlentyCard::use(Catan& game, Player& player) {
     std::cout << "Choose two resources to gain from the bank.\n"
               << "\t1. Wood\n"

@@ -11,3 +11,7 @@ std::string KnightCard::emoji() {
 CardType KnightCard::type() {
     return CardType::KNIGHT;
 }
+
+Card* KnightCard::clone() {
+    return new KnightCard(*this);
+}

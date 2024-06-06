@@ -15,6 +15,10 @@ CardType MonopolyCard::type() {
     return CardType::MONOPOLY;
 }
 
+Card* MonopolyCard::clone() {
+    return new MonopolyCard(*this);
+}
+
 void MonopolyCard::use(Catan& game, Player& player) {
     cout << "Player " << player.get_color() << " is playing Monopoly Card\n";
     cout << "Choose a resource type to monopolize:\n"

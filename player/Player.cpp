@@ -1,7 +1,11 @@
 #include "Player.hpp"
 
 #include "../Catan.hpp"
+#include "../cards/KngihtCard.hpp"
+#include "../cards/MonopolyCard.hpp"
 #include "../cards/PromotionCard.hpp"
+#include "../cards/RoadBuildCard.hpp"
+#include "../cards/YearOfPlentyCard.hpp"
 
 using std::cout, std::cin;
 
@@ -14,10 +18,48 @@ Player::Player(PlayerColor color) {
     }
 }
 
+Player::Player(const Player &other) {
+    color = other.color;
+    victoryPoints = other.victoryPoints;
+    knights_counter = other.knights_counter;
+    for (int i = 0; i < 5; i++) {
+        resourceCount[i] = other.resourceCount[i];
+    }
+
+    for (auto card : other.devCards) {
+        devCards.push_back(card->clone());
+    }
+}
+
 Player::~Player() {
     for (auto card : devCards) {
         delete card;
     }
+}
+
+Player &Player::operator=(const Player &other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    // copy the other player's data and delete the current player's data
+    color = other.color;
+    victoryPoints = other.victoryPoints;
+    knights_counter = other.knights_counter;
+    for (int i = 0; i < 5; i++) {
+        resourceCount[i] = other.resourceCount[i];
+    }
+
+    for (auto card : devCards) {
+        delete card;
+    }
+    devCards.clear();
+
+    for (auto card : other.devCards) {
+        devCards.push_back(card->clone());
+    }
+
+    return *this;
 }
 
 void Player::play_turn(Catan &game) {
@@ -501,12 +543,11 @@ void Player::add_dev_card(Card *card) {
 }
 
 int Player::get_dev_card_count(const CardType &type) {
-    throw std::logic_error("no im");
     int count = 0;
     for (int i = 0; i < devCards.size(); i++) {
-        // if (devCards[i]->get_type() == type) {
-        // count++;
-        // }
+        if (devCards[i]->type() == type) {
+            count++;
+        }
     }
     return count;
 }

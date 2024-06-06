@@ -6,4 +6,5 @@ class KnightCard : public Card {
     std::string get_description() override;
     std::string emoji() override;
     CardType type() override;
+    Card* clone() override;
 };

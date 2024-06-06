@@ -12,3 +12,7 @@ std::string VictoryPointCard::emoji() {
 CardType VictoryPointCard::type(){
     return CardType::VICTORY_POINT;
 }
+
+Card* VictoryPointCard::clone() {
+    return new VictoryPointCard(*this);
+}

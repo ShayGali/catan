@@ -14,10 +14,56 @@ Catan::Catan(Player& player1, Player& player2, Player& player3) : players{&playe
     init_game();
 }
 
+Catan::Catan(const Catan& other) {
+    current_player_index = other.current_player_index;
+    for (int i = 0; i < 54; i++) {
+        vertices[i] = other.vertices[i];
+    }
+    for (int i = 0; i < 72; i++) {
+        edges[i] = other.edges[i];
+    }
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        players[i] = other.players[i];
+    }
+    for (int i = 0; i < other.dev_cards.size(); i++) {
+        dev_cards.push_back(other.dev_cards[i]->clone());
+    }
+}
+
 Catan::~Catan() {
     for (int i = 0; i < dev_cards.size(); i++) {
         delete dev_cards[i];
     }
+}
+
+Catan& Catan::operator=(const Catan& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    // delete old dev cards
+    for (int i = 0; i < dev_cards.size(); i++) {
+        delete dev_cards[i];
+    }
+    dev_cards.clear();
+
+    // copy new dev cards
+    for (int i = 0; i < other.dev_cards.size(); i++) {
+        dev_cards.push_back(other.dev_cards[i]->clone());
+    }
+
+    current_player_index = other.current_player_index;
+    for (int i = 0; i < 54; i++) {
+        vertices[i] = other.vertices[i];
+    }
+    for (int i = 0; i < 72; i++) {
+        edges[i] = other.edges[i];
+    }
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        players[i] = other.players[i];
+    }
+
+    return *this;
 }
 
 Player** Catan::get_players() {
