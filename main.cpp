@@ -60,7 +60,11 @@ void demo_first_round() {
 
     player3.add_resource(resource::WHEAT, 1);
 
-    cout << "Player 1: " << player1.get_victory_points() << endl;
+    Player* winner;
+    while ((winner = catan.is_game_over()) == nullptr) {
+        catan.play_turn();
+    }
+    cout << "Game over! " << winner->get_color() << " wins!" << endl;
 }
 
 void place_a_city(Catan& catan, Player& player) {
@@ -126,13 +130,13 @@ void real_game_with_demo_start() {
 }
 
 int main() {
-    // demo_first_round();
+    demo_first_round();
     // real_game_with_demo_start();
     // real_game();
 
-    Player player1(PlayerColor::RED);
-    Catan catan(player1, player1, player1);
+    // Player player1(PlayerColor::RED);
+    // Catan catan(player1, player1, player1);
 
-    player1.buy_dev_card(catan);
+    // player1.buy_dev_card(catan);
     return 0;
 }
