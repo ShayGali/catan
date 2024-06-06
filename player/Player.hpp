@@ -63,6 +63,7 @@ class Player {
     void add_knight();
     int get_knights();
     int get_dev_card_count(const CardType& type);
+    vector<Card*> get_dev_cards();
 
     bool operator==(const Player& other) const;
     bool operator!=(const Player& other) const;

@@ -213,12 +213,11 @@ void Player::display_dev_cards() {
 
 void Player::buy_dev_card(Catan &game) {
     if (get_resource_count(resource::WHEAT) < 1 || get_resource_count(resource::SHEEP) < 1 || get_resource_count(resource::STONE) < 1) {
-        cout << "Not enough resources to buy a development card\n";
-        return;
+        throw std::runtime_error("Not enough resources to buy a development card");
     }
 
     // Buy a random development card
-    Card *card = game.get_dev_card(*this);
+    Card *card = game.buy_dev_card(*this);
     devCards.push_back(card);
 
     cout << "You got: " << card->emoji() << "\n";
@@ -510,6 +509,10 @@ int Player::get_dev_card_count(const CardType &type) {
         // }
     }
     return count;
+}
+
+vector<Card *> Player::get_dev_cards() {
+    return devCards;
 }
 
 bool Player::operator==(const Player &other) const {

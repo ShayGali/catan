@@ -9,7 +9,7 @@ GAME=../Catan.o
 
 all: test
 
-test: $(PROG) test.o
+test: $(PROG) test.o $(GAME) $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 	make -C ../ catan
 	$(CXX) $(CXXFLAGS) -o ./test test.o $(GAME) $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 
@@ -19,5 +19,7 @@ run: test
 valgrind: test
 	valgrind $(VALGRIND_FLAGS) ./$< 2>&1
 
+clean:
+	rm -f test test.o
 
 .PHONY: run
