@@ -20,6 +20,10 @@ Catan::~Catan() {
     }
 }
 
+Player** Catan::get_players() {
+    return players;
+}
+
 void Catan::first_round() {
     display_board();
     for (int i = 0; i < NUM_PLAYERS; i++) {
@@ -52,13 +56,13 @@ void Catan::play_turn() {
 }
 
 Player* Catan::is_game_over() {
-    if (players[0]->get_victory_points() >= 10) {
+    if (players[0]->get_victory_points() >= POINTS_TO_WIN) {
         return players[0];
     }
-    if (players[1]->get_victory_points() >= 10) {
+    if (players[1]->get_victory_points() >= POINTS_TO_WIN) {
         return players[1];
     }
-    if (players[2]->get_victory_points() >= 10) {
+    if (players[2]->get_victory_points() >= POINTS_TO_WIN) {
         return players[2];
     }
     return nullptr;
@@ -343,6 +347,7 @@ void Catan::use_dev_card(Player& player, Card* card) {
 }
 
 void Catan::init_game() {
+    // seed random number generator
     srand(time(0));
     current_player_index = 0;
 
@@ -357,8 +362,6 @@ void Catan::init_game() {
     init_edges();
     init_board();
     init_dev_cards();
-
-    // seed random number generator
 }
 
 Player* Catan::start_game() {

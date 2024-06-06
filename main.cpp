@@ -106,11 +106,10 @@ void real_game_with_demo_start() {
 
     player3.add_resource(resource::WHEAT, 1);
 
-    player1.add_resource(resource::WHEAT, 1);
+    player1.add_resource(resource::WHEAT, 2);
     player1.add_resource(resource::SHEEP, 1);
-    player1.add_resource(resource::STONE, 1);
+    player1.add_resource(resource::STONE, 3);
 
-    player1.display_resources();
     Player* winner;
     while ((winner = catan.is_game_over()) == nullptr) {
         catan.play_turn();

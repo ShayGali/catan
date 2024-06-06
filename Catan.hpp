@@ -10,6 +10,7 @@
 #include "player/Player.hpp"
 
 constexpr int NUM_PLAYERS = 3;
+constexpr int POINTS_TO_WIN = 10;
 class Catan {
    private:
     int current_player_index;

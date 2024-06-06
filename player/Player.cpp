@@ -16,20 +16,37 @@ Player::Player(PlayerColor color) {
 void Player::play_turn(Catan &game) {
     char choice;
     while (true) {
-        cout << "Choose an action:\n";
-        cout << "\t1. Roll dice\n";
-        cout << "\t2. Use development card\n";
+        cout << "Choose an action:\n"
+             << "\t1. Roll dice\n"
+             << "\t2. Use development card\n"
+             << "\tR. Display resources\n"
+             << "\tD. Display development cards\n"
+             << "\tV. Display victory points\n"
+             << "\tK. Display knights\n";
 
         // get user input from console
         cin >> choice;
+
         if (choice == '1') {
             game.roll_dice();
             break;
         } else if (choice == '2') {
-            use_dev_card(game);
-
-            // if he use a development card, he can't roll the dice
-            return;
+            try {
+                use_dev_card(game);
+                // if he use a development card, he can't roll the dice
+                return;
+            } catch (std::exception &e) {
+                cout << e.what() << "\n";
+            }
+        }
+        if (choice == 'R') {
+            display_resources();
+        }else if (choice == 'D') {
+            display_dev_cards();
+        }else if (choice == 'V') {
+            cout << "Victory points: " << victoryPoints << "\n";
+        }else if (choice == 'K') {
+            cout << "Knights: " << knights_counter << "\n";
         } else {
             cout << "Invalid choice\n";
             continue;
@@ -37,15 +54,18 @@ void Player::play_turn(Catan &game) {
     };
 
     while (true) {
-        cout << "Choose an action:\n";
-        cout << "\t1. Place settlement\n";
-        cout << "\t2. Place road\n";
-        cout << "\t3. Place city\n";
-        cout << "\t4. Buy development card\n";
-        cout << "\t5. Trade\n";
-        cout << "\t6. Display resources\n";
-        cout << "\t7. Display development cards\n";
-        cout << "\t8. End turn\n";
+        cout << "Choose an action:\n"
+             << "\t1. Place settlement\n"
+             << "\t2. Place road\n"
+             << "\t3. Place city\n"
+             << "\t4. Buy development card\n"
+             << "\t5. Trade\n"
+             << "\tR. Display resources\n"
+             << "\tD. Display development cards\n"
+             << "\tV. Display victory points\n"
+             << "\tK. Display knights\n"
+             << "\tB. Display Board\n"
+             << "\tE. End turn\n";
 
         cin >> choice;
 
@@ -71,13 +91,22 @@ void Player::play_turn(Catan &game) {
                     make_trade(game);
                     break;
                 }
-                case '6':
+                case 'R':
                     display_resources();
                     break;
-                case '7':
+                case 'D':
                     display_dev_cards();
                     break;
-                case '8': {
+                case 'V':
+                    cout << "Victory points: " << victoryPoints << "\n";
+                    break;
+                case 'K':
+                    cout << "Knights: " << knights_counter << "\n";
+                    break;
+                case 'B':
+                    game.display_board();
+                    break;
+                case 'E': {
                     return;
                 }
                 default: {
@@ -404,11 +433,10 @@ bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &of
 }
 
 void Player::use_dev_card(Catan &game) {
-    display_dev_cards();
-
     if (devCards.empty()) {
-        return;
+        throw std::invalid_argument("No development cards");
     }
+    display_dev_cards();
 
     while (true) {
         cout << "Enter 1 to use a development card, 2 to show info about a development card, -1 to cancel\n";
@@ -424,11 +452,11 @@ void Player::use_dev_card(Catan &game) {
             cout << "Enter the index of the development card\n";
             int index;
             cin >> index;
-            if (index < 0 || index >= devCards.size()) {
+            if (index <= 0 || index > devCards.size()) {
                 cout << "Invalid index\n";
                 continue;
             }
-            cout << devCards[index]->get_description() << "\n";
+            cout << devCards[index - 1]->get_description() << "\n";
         }
     }
 

@@ -60,13 +60,14 @@ void LandVertex::upgrade_to_city() {
 
 std::string LandVertex::get_settlement_string() {
     if (this->owner == nullptr) {
+        // empty vertex emoji
         return "E";
     }
     std::string player_color_code = this->owner->get_color_code();
     std::string RESET_COLOR = "\033[0m";
     if (this->isCity) {
-        return player_color_code + "C" + RESET_COLOR;
+        return player_color_code + "🏙" + RESET_COLOR;
     } else {
-        return player_color_code + "S" + RESET_COLOR;
+        return player_color_code + "🏘" + RESET_COLOR;
     }
 }
