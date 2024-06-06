@@ -9,6 +9,10 @@ std::string YearOfPlentyCard::emoji() {
     return "🌟";
 }
 
+CardType YearOfPlentyCard::type(){
+    return CardType::YEAR_OF_PLENTY;
+}
+
 void YearOfPlentyCard::use(Catan& game, Player& player) {
     throw std::runtime_error("Not implemented");
 }

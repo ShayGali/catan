@@ -9,6 +9,10 @@ std::string MonopolyCard::emoji() {
     return "🏦";
 }
 
+CardType MonopolyCard::type(){
+    return CardType::MONOPOLY;
+}
+
 void MonopolyCard::use(Catan& game, Player& player) {
     throw std::runtime_error("Not implemented");
 }

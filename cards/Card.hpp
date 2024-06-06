@@ -17,6 +17,8 @@ class Card {
    public:
     virtual std::string get_description() = 0;
     virtual std::string emoji() = 0;
+    virtual CardType type();
+
     virtual ~Card() = default;
 
     static CardType from_int(int type) {

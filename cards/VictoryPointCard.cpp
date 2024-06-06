@@ -8,3 +8,7 @@ std::string VictoryPointCard::get_description() {
 std::string VictoryPointCard::emoji() {
     return "🏆";
 }
+
+CardType VictoryPointCard::type(){
+    return CardType::VICTORY_POINT;
+}

@@ -8,6 +8,10 @@ std::string RoadBuildCard::emoji() {
     return "🛣️";
 }
 
+CardType RoadBuildCard::type(){
+    return CardType::ROAD_BUILDING;
+}
+
 void RoadBuildCard::use(Catan& game, Player& player) {
     throw std::runtime_error("Not implemented");
 }

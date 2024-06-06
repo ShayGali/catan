@@ -181,8 +181,8 @@ void Player::buy_dev_card(Catan &game) {
         game.get_dev_card(*this);
     } catch (std::invalid_argument &e) {
         cout << e.what() << "\n";
+        return;
     }
-    use_resource(resource::WHEAT, 1);
 
     // Buy a random development card
     Card *card = game.get_dev_card(*this);
@@ -404,7 +404,6 @@ bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &of
 }
 
 void Player::use_dev_card(Catan &game) {
-    throw std::logic_error("Not implemented");
     display_dev_cards();
 
     if (devCards.empty()) {
