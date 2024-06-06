@@ -1,6 +1,10 @@
 #pragma once
+#include <iostream>
 #include <stdexcept>
 #include <string>
+
+#include "../game_piece/resource.hpp"
+
 enum class CardType {
     KNIGHT,
     VICTORY_POINT,

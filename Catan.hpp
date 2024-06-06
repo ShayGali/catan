@@ -27,6 +27,9 @@ class Catan {
    public:
     ~Catan();
     Catan(Player& player1, Player& player2, Player& player3);
+
+    Player** get_players();
+
     void first_round();
     void play_turn();
     Player* start_game();

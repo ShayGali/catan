@@ -1,5 +1,7 @@
 #include "MonopolyCard.hpp"
 
+#include "../Catan.hpp"
+#include "../player/Player.hpp"
 
 std::string MonopolyCard::get_description() {
     return "Monopoly: When you play this card, you choose a resource type. All other players must give you all of their resources of that type.";
@@ -9,10 +11,36 @@ std::string MonopolyCard::emoji() {
     return "🏦";
 }
 
-CardType MonopolyCard::type(){
+CardType MonopolyCard::type() {
     return CardType::MONOPOLY;
 }
 
 void MonopolyCard::use(Catan& game, Player& player) {
-    throw std::runtime_error("Not implemented");
+    cout << "Player " << player.get_color() << " is playing Monopoly Card\n";
+    cout << "Choose a resource type to monopolize:\n"
+         << "\t1. Wood\n"
+         << "\t2. Clay\n"
+         << "\t3. Sheep\n"
+         << "\t4. Wheat\n"
+         << "\t5. Stone\n";
+
+    int resource_type;
+    std::cin >> resource_type;
+
+    if (resource_type < 1 || resource_type > 5) {
+        throw std::invalid_argument("Invalid resource choice");
+    }
+
+    resource res = resource::from_int(resource_type - 1);
+
+    for (int i = 0; i < NUM_PLAYERS; i++) {
+        if (game.get_players()[i] == &player) {
+            continue;
+        }
+
+        Player* other_player = game.get_players()[i];
+        int num_resources = other_player->get_resource_count(res);
+        other_player->use_resource(res, num_resources);
+        player.add_resource(res, num_resources);
+    }
 }
