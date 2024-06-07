@@ -17,6 +17,9 @@ catan: Catan.o main.o game_piece player cards
 run: $(PROG)
 	./$(PROG)
 
+debug: $(PROG)
+	gdb $(PROG)
+
 test:
 	make -C tests run
 	

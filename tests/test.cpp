@@ -18,6 +18,42 @@ TEST_CASE("place settlement") {
         CHECK(player1.get_victory_points() == 1);
     }
 
+    SUBCASE("place near a road") {
+        Player player1(PlayerColor::RED);
+        Catan catan(player1, player1, player1);
+
+        // give player1 a resource to make him able to place a settlement
+        player1.add_resource(resource::WOOD, 3);
+        player1.add_resource(resource::CLAY, 3);
+        player1.add_resource(resource::SHEEP, 2);
+        player1.add_resource(resource::WHEAT, 2);
+
+        catan.place_settlement(34, player1, true);
+        catan.place_road(41, player1);
+        catan.place_road(40, player1);
+        catan.place_settlement(33, player1);
+
+        CHECK(catan.get_vertices()[33].get_owner() == &player1);
+        CHECK(player1.get_victory_points() == 2);
+    }
+
+    SUBCASE("place near a road that is not owned by the player") {
+        Player player1(PlayerColor::RED);
+        Player player2(PlayerColor::BLUE);
+        Catan catan(player1, player2, player2);
+
+        // give player2 a resource to make him able to place a settlement
+        player2.add_resource(resource::WOOD, 1);
+        player2.add_resource(resource::CLAY, 1);
+        player2.add_resource(resource::SHEEP, 1);
+        player2.add_resource(resource::WHEAT, 1);
+
+        catan.place_settlement(34, player1, true);
+        catan.place_road(41, player1, true);
+        catan.place_road(40, player1, true);
+        CHECK_THROWS(catan.place_settlement(33, player2));
+    }
+
     SUBCASE("try to place in taken vertex") {
         Player player1(PlayerColor::RED);
         Player player2(PlayerColor::BLUE);
@@ -236,7 +272,7 @@ TEST_CASE("Buy dev card") {
         // check that the player has a dev card
         CHECK(player1.get_dev_cards().size() == 1);
     }
-    
+
     SUBCASE("try to buy dev card without any resources") {
         Player player1(PlayerColor::RED);
         Catan catan(player1, player1, player1);

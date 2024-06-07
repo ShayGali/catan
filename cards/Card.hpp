@@ -38,4 +38,21 @@ class Card {
                 throw std::invalid_argument("Invalid card type");
         }
     }
+
+    static std::string emoji_from_type(CardType type) {
+        switch (type) {
+            case CardType::KNIGHT:
+                return "⚔️";
+            case CardType::VICTORY_POINT:
+                return "🏆";
+            case CardType::ROAD_BUILDING:
+                return "🛣️";
+            case CardType::MONOPOLY:
+                return "🏦";
+            case CardType::YEAR_OF_PLENTY:
+                return "🌟";
+            default:
+                throw std::invalid_argument("Invalid card type");
+        }
+    }
 };

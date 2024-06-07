@@ -32,6 +32,11 @@ void demo_first_round() {
     Player player2(PlayerColor::BLUE);
     Player player3(PlayerColor::YELLOW);
 
+    // give player1 resources
+    player1.add_resource(resource::WHEAT, 2);
+    player1.add_resource(resource::SHEEP, 1);
+    player1.add_resource(resource::STONE, 3);
+
     Catan catan(player1, player2, player3);
 
     // 8 13 20 31 31 46 47 62 14 15 21 23

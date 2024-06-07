@@ -108,7 +108,8 @@ void Player::play_turn(Catan &game) {
              << "\t2. Place road\n"
              << "\t3. Place city\n"
              << "\t4. Buy development card\n"
-             << "\t5. Trade\n"
+             << "\t5. Use development card\n"
+             << "\t6. Trade\n"
              << "\tR. Display resources\n"
              << "\tD. Display development cards\n"
              << "\tV. Display victory points\n"
@@ -137,6 +138,10 @@ void Player::play_turn(Catan &game) {
                     break;
                 }
                 case '5': {
+                    use_dev_card(game);
+                    return;
+                }
+                case '6': {
                     make_trade(game);
                     break;
                 }
@@ -234,11 +239,11 @@ void Player::use_resource(resource resource, int count) {
 void Player::display_resources() {
     resource wood = resource::WOOD, clay = resource::CLAY, sheep = resource::SHEEP, wheat = resource::WHEAT, stone = resource::STONE;
     cout << "Resources: \n"
-         << "\t" << wood.get_emoji() << ":" << resourceCount[0] << "\n"
-         << "\t" << clay.get_emoji() << ":" << resourceCount[1] << "\n"
-         << "\t" << sheep.get_emoji() << ":" << resourceCount[2] << "\n"
-         << "\t" << wheat.get_emoji() << ":" << resourceCount[3] << "\n"
-         << "\t" << stone.get_emoji() << ":" << resourceCount[4] << "\n";
+         << "\t1." << wood.get_emoji() << ":" << resourceCount[0] << "\n"
+         << "\t2." << clay.get_emoji() << ":" << resourceCount[1] << "\n"
+         << "\t3." << sheep.get_emoji() << ":" << resourceCount[2] << "\n"
+         << "\t4." << wheat.get_emoji() << ":" << resourceCount[3] << "\n"
+         << "\t5." << stone.get_emoji() << ":" << resourceCount[4] << "\n";
 }
 
 void Player::display_dev_cards() {
@@ -273,6 +278,7 @@ int Player::place_settlement(Catan &game, bool first_round) {
         return -1;
     }
 
+    // loop until the player places a settlement successfully
     int x;
     while (true) {
         cout << "Enter the coordinates of the settlement (-1 to cancel)\n";
@@ -294,6 +300,8 @@ int Player::place_settlement(Catan &game, bool first_round) {
             continue;
         }
     }
+
+    // return the index of the settlement placed
     return x;
 }
 
@@ -304,9 +312,10 @@ void Player::place_road(Catan &game, bool first_round) {
         return;
     }
 
+    // loop until the player places a road successfully
+    int x;
     while (true) {
         cout << "Enter the coordinates of the road (-1 to cancel)\n";
-        int x;
         cin >> x;
         if (x == -1) {
             if (first_round) {
@@ -332,9 +341,10 @@ void Player::place_city(Catan &game) {
         return;
     }
 
+    // loop until the player places a city successfully
+    int x;
     while (true) {
         cout << "Enter the coordinates of the city (-1 to cancel)\n";
-        int x;
         cin >> x;
         if (x == -1) {
             return;
@@ -350,122 +360,157 @@ void Player::place_city(Catan &game) {
 }
 
 void Player::make_trade(Catan &game) {
-    throw std::logic_error("Not implemented");
-
     vector<pair<resource, int>> offer_res;
     vector<pair<Card *, int>> offer_dev;
 
-    cout << "Choose a offer resource (enter -1 to end the resources selection)\n";
     display_resources();
 
     int choice;
     while (true) {
+        cout << "Choose a offer resource (enter -1 to end the resources selection)\n";
         cin >> choice;
         if (choice == -1) {
             break;
         }
-        if (choice < 0 || choice > 4) {
+        if (choice <= 0 || choice > 5) {
             cout << "Invalid choice\n";
             continue;
         }
         cout << "Enter the amount of the resource\n";
         int amount;
         cin >> amount;
-        if (amount > resourceCount[choice]) {
+
+        if (amount <= 0) {
+            cout << "Invalid amount\n";
+            continue;
+        }
+
+        if (amount > resourceCount[choice - 1]) {
             cout << "You don't have enough resources\n";
             continue;
         }
-        offer_res.push_back({resource::from_int(choice), amount});
+
+        offer_res.push_back({resource::from_int(choice - 1), amount});
     }
 
-    cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
-    for (int i = 0; i < devCards.size(); i++) {
-        cout << i << ". " << devCards[i]->emoji() << "\n";
-    }
+    if (!devCards.empty()) {
+        vector<bool> selected(devCards.size(), false);
 
-    vector<bool> selected(devCards.size(), false);
+        cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
+        for (int i = 0; i < devCards.size(); i++) {
+            cout << (i + 1) << ". " << devCards[i]->emoji() << "\n";
+        }
 
-    while (true) {
-        cin >> choice;
-        if (choice == -1) {
-            break;
+        while (true) {
+            cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
+            cout << "Enter development card index\n";
+            int index;
+            cin >> index;
+
+            if (index == -1) {
+                break;
+            }
+
+            if (index > devCards.size() || index <= 0) {
+                cout << "Invalid index\n";
+                continue;
+            }
+            if (selected[index - 1]) {
+                cout << "You already selected this card\n";
+                continue;
+            }
+            selected[index - 1] = true;
+            offer_dev.push_back({devCards[index - 1], 1});
         }
-        if (choice < 0 || choice > devCards.size()) {
-            cout << "Invalid choice\n";
-            continue;
-        }
-        cout << "Enter development card index\n";
-        int index;
-        cin >> index;
-        if (index > devCards.size() || index < 0) {
-            cout << "Invalid index\n";
-            continue;
-        }
-        if (selected[index]) {
-            cout << "You already selected this card\n";
-            continue;
-        }
-        selected[index] = true;
-        offer_dev.push_back({devCards[index], 1});
     }
 
     vector<pair<resource, int>> request_res;
     vector<pair<CardType, int>> request_dev;
 
-    cout << "Choose a request resource (enter -1 to end the resources selection)\n";
-    cout << "1. Wood, 2. Clay, 3. Sheep, 4. Wheat, 5. Stone\n";
     while (true) {
+        cout << "Choose a request resource (enter -1 to end the resources selection)\n";
+        cout << "1. Wood, 2. Clay, 3. Sheep, 4. Wheat, 5. Stone\n";
         cin >> choice;
         if (choice == -1) {
             break;
         }
-        if (choice < 0 || choice > 4) {
+        if (choice < 0 || choice > 5) {
             cout << "Invalid choice\n";
             continue;
         }
         cout << "Enter the amount of the resource\n";
         int amount;
         cin >> amount;
-        request_res.push_back({resource::from_int(choice), amount});
+
+        if (amount <= 0) {
+            cout << "Invalid amount\n";
+            continue;
+        }
+
+        request_res.push_back({resource::from_int(choice - 1), amount});
     }
 
-    cout << "Choose a request development card (enter -1 to end the development cards selection)\n";
-    cout << "1. Knight, 2. Road Building, 3. Year of Plenty, 4. Monopoly\n";
     while (true) {
+        cout << "Choose a request development card (enter -1 to end the development cards selection)\n";
+        cout << "1. Knight, 2. Victory Point, 3. Road Building, 4. Monopoly, 5. Year of Plenty\n";
         cin >> choice;
         if (choice == -1) {
             break;
         }
-        if (choice < 0 || choice > 4) {
+        if (choice <= 0 || choice > 5) {
             cout << "Invalid choice\n";
             continue;
         }
         cout << "Enter the amount of the development card\n";
         int amount;
         cin >> amount;
-        request_dev.push_back({Card::from_int(choice), amount});
+
+        if (amount <= 0) {
+            cout << "Invalid amount\n";
+            continue;
+        }
+
+        request_dev.push_back({Card::from_int(choice - 1), amount});
+    }
+
+    try {
+        game.make_trade_offer(*this, offer_res, offer_dev, request_res, request_dev);
+    } catch (std::invalid_argument &e) {
+        cout << e.what() << "\n";
     }
 }
 
-bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<pair<Card *, int>> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<Card *, int>> &request_dev) {
+bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<pair<Card *, int>> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<CardType, int>> &request_dev) {
+    if (offer_res.empty() && offer_dev.empty() && request_res.empty() && request_dev.empty()) {
+        cout << "Invalid trade request\n";
+        return false;
+    }
     cout << "Player " << get_color() << " received a trade request from player " << trader.get_color() << "\n";
-    cout << "Offered resources: \n";
-    for (auto &res : offer_res) {
-        cout << "\t" << res.second << " " << res.first.get_emoji() << "\n";
+    if (!offer_res.empty()) {
+        cout << "Offered resources: \n";
+        for (auto &res : offer_res) {
+            cout << "\t" << res.second << " " << res.first.get_emoji() << "\n";
+        }
     }
-    cout << "Offered development cards: \n";
-    for (auto &dev : offer_dev) {
-        cout << "\t" << dev.second << " " << dev.first->emoji() << "\n";
+    if (!offer_dev.empty()) {
+        cout << "Offered development cards: \n";
+        for (auto &dev : offer_dev) {
+            cout << "\t" << dev.second << " " << dev.first->emoji() << "\n";
+        }
     }
 
-    cout << "Requested resources: \n";
-    for (auto &res : request_res) {
-        cout << "\t" << res.second << " " << res.first.get_emoji() << "\n";
+    if (!request_res.empty()) {
+        cout << "Requested resources: \n";
+        for (auto &res : request_res) {
+            cout << "\t" << res.second << " " << res.first.get_emoji() << "\n";
+        }
     }
 
-    cout << "Requested development cards: \n";
-    for (auto &dev : request_dev) {
-        cout << "\t" << dev.second << " " << dev.first->emoji() << "\n";
+    if (!request_dev.empty()) {
+        cout << "Requested development cards: \n";
+        for (auto &dev : request_dev) {
+            cout << "\t" << dev.second << " " << Card::emoji_from_type(dev.first) << "\n";
+        }
     }
 
     cout << "Your resources: \n";
@@ -517,25 +562,40 @@ void Player::use_dev_card(Catan &game) {
     }
     Card *card = devCards[index - 1];
 
+    use_dev_card(game, card);
+}
+
+void Player::use_dev_card(Catan &game, Card *card) {
+    game.use_dev_card(*this, card);
+
     // if the card is Promotion, we need to delete it from the player's devCards
     if (dynamic_cast<PromotionCard *>(card)) {
-        devCards.erase(devCards.begin() + index - 1);
+        devCards.erase(std::remove(devCards.begin(), devCards.end(), card), devCards.end());
         delete card;
     }
-
-    game.use_dev_card(*this, card);
 }
 
 void Player::add_knight() {
     knights_counter++;
 }
 
+void Player::remove_knight() {
+    knights_counter--;
+}
+
 int Player::get_knights() {
     return knights_counter;
 }
 
-void Player::remove_dev_card(Card *card) {
-    devCards.erase(std::remove(devCards.begin(), devCards.end(), card), devCards.end());
+Card *Player::remove_dev_card(CardType type) {
+    for (int i = 0; i < devCards.size(); i++) {
+        if (devCards[i]->type() == type) {
+            Card *card = devCards[i];
+            devCards.erase(devCards.begin() + i);
+            return card;
+        }
+    }
+    return nullptr;
 }
 
 void Player::add_dev_card(Card *card) {

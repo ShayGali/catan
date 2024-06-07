@@ -240,7 +240,7 @@ void Catan::play_dev_card(Player& player, Card& card) {
     throw std::logic_error("Not implemented");
 }
 
-void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<Card*, int>>& request_dev) {
+void Catan::make_trade_offer(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<CardType, int>>& request_dev) {
     // check if the player has enough resources
     for (int i = 0; i < offer_res.size(); i++) {
         if (trader.get_resource_count(offer_res[i].first) < offer_res[i].second) {
@@ -250,10 +250,9 @@ void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, 
 
     // check if the player have the development cards
     for (int i = 0; i < offer_dev.size(); i++) {
-        // TODO:
-        //  if (trader.get_dev_card_count(offer_dev[i].first->get_type()) < offer_dev[i].second) {
-        //      throw std::invalid_argument("Not enough development cards to trade! (trying to trade " + std::to_string(offer_dev[i].second) + " " + offer_dev[i].first->emoji() + ")");
-        //  }
+        if (trader.get_dev_card_count(offer_dev[i].first->type()) < offer_dev[i].second) {
+            throw std::invalid_argument("Not enough development cards to trade! (trying to trade " + std::to_string(offer_dev[i].second) + " " + offer_dev[i].first->emoji() + ")");
+        }
     }
 
     // offer each player the offer
@@ -264,21 +263,31 @@ void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, 
 
         // ask the player if they want to trade
         if (players[i]->trade_request(trader, offer_res, offer_dev, request_res, request_dev)) {
+            bool need_continue = false;
             // check if the player has enough resources
             for (int j = 0; j < request_res.size(); j++) {
                 if (players[i]->get_resource_count(request_res[j].first) < request_res[j].second) {
                     cout << "Player " << players[i]->get_color() << " does not have enough resources to trade! (trying to trade " << request_res[j].second << " " << request_res[j].first.get_emoji() << ")\n";
-                    return;
+                    need_continue = true;
+                    break;
                 }
+            }
+
+            if (need_continue) {
+                continue; // skip the player
             }
 
             // check if the player have the development cards
             for (int j = 0; j < request_dev.size(); j++) {
-                // TODO:
-                //  if (players[i].get_dev_card_count(request_dev[j].first->get_type()) < request_dev[j].second) {
-                //      cout << "Player " << players[i].get_color() << " does not have enough development cards to trade! (trying to trade " << request_dev[j].second << " " << request_dev[j].first->emoji() << ")\n";
-                //      return;
-                //  }
+                if (players[i]->get_dev_card_count(request_dev[j].first) < request_dev[j].second) {
+                    cout << "Player " << players[i]->get_color() << " does not have enough development cards to trade! (trying to trade " << request_dev[j].second << " " << Card::emoji_from_type(request_dev[j].first) << ")\n";
+                    need_continue = true;
+                    break;
+                }
+            }
+
+            if (need_continue) {
+                continue; // skip the player
             }
 
             // trade the resources
@@ -294,17 +303,37 @@ void Catan::trade(Player& trader, const vector<pair<resource, int>>& offer_res, 
 
             // trade the development cards
             for (int j = 0; j < offer_dev.size(); j++) {
-                trader.remove_dev_card(offer_dev[j].first);
-                players[i]->add_dev_card(offer_dev[j].first);
+                Card* card = trader.remove_dev_card(offer_dev[j].first->type());
+                players[i]->add_dev_card(card);
+                if (card->type() == CardType::KNIGHT) {
+                    trader.remove_knight();
+                    if (trader.get_knights() == 2) {
+                        trader.add_victory_points(-2);
+                    }
+
+                    players[i]->add_knight();
+                    if (players[i]->get_knights() >= 3) {
+                        players[i]->add_victory_points(2);
+                    }
+                } else if (card->type() == CardType::VICTORY_POINT) {
+                    trader.add_victory_points(-1);
+                    players[i]->add_victory_points(1);
+                }
             }
 
             for (int j = 0; j < request_dev.size(); j++) {
-                players[i]->remove_dev_card(request_dev[j].first);
-                trader.add_dev_card(request_dev[j].first);
+                Card* card = players[i]->remove_dev_card(request_dev[j].first);
+                trader.add_dev_card(card);
             }
+
+            cout << "Trade successful! " << trader.get_color() << " traded with " << players[i]->get_color() << "\n";
+            // end the trade
+            return;
         }
     }
 }
+
+
 
 void Catan::roll_dice() {
     int dice_1 = rand() % 6 + 1;
@@ -397,7 +426,6 @@ void Catan::init_game() {
     // seed random number generator
     srand(time(0));
     current_player_index = 0;
-
     for (int i = 0; i < 54; i++) {
         vertices[i] = LandVertex(i);
     }
