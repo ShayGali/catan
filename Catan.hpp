@@ -11,6 +11,7 @@
 
 constexpr int NUM_PLAYERS = 3;
 constexpr int POINTS_TO_WIN = 10;
+
 class Catan {
    private:
     int current_player_index;
@@ -19,6 +20,9 @@ class Catan {
     LandVertex vertices[54];
     RoadEdge edges[72];
 
+    /**
+     * @brief This function initializes the game by setting up the board, the players, the vertices, the edges and the development cards
+     */
     void init_game();
     void init_vertices();
     void init_edges();
