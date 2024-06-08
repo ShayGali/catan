@@ -1,6 +1,10 @@
 #include "RoadEdge.hpp"
-RoadEdge::RoadEdge(int id) : id(id) {
-    this->owner = nullptr;
+RoadEdge::RoadEdge()
+    : id(-1), owner(nullptr) {
+}
+
+RoadEdge::RoadEdge(int id)
+    : id(id), owner(nullptr), adjacentVertices(2, nullptr), adjacentEdges(4, nullptr) {
 }
 
 void RoadEdge::set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2) {
@@ -30,13 +34,13 @@ void RoadEdge::set_owner(Player* player) {
 Player* RoadEdge::get_owner() {
     return this->owner;
 }
-int RoadEdge::get_id() {
+int RoadEdge::get_id() const{
     return this->id;
 }
 
 std::string RoadEdge::get_color_code() {
     if (this->owner == nullptr) {
-        return "\033[1;37m"; // White
+        return "\033[1;37m";  // White
     }
     return this->owner->get_color_code();
 }

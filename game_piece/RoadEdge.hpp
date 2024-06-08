@@ -8,11 +8,11 @@ class RoadEdge {
    private:
     int id;
     Player* owner;
-    LandVertex* adjacentVertices[2];
-    RoadEdge* adjacentEdges[4];
+    vector<LandVertex*> adjacentVertices;
+    vector<RoadEdge*> adjacentEdges;
 
    public:
-    RoadEdge() = default;
+    RoadEdge();
     RoadEdge(int id);
 
     void set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2);
@@ -26,7 +26,8 @@ class RoadEdge {
     void set_owner(Player* player);
 
     Player* get_owner();
-    int get_id();
+
+    int get_id() const;
 
     std::string get_color_code();
 };

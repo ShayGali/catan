@@ -15,10 +15,10 @@ constexpr int POINTS_TO_WIN = 10;
 class Catan {
    private:
     int current_player_index;
-    Player* players[3];
+    vector<Player*> players;
+    vector<LandVertex> vertices;
+    vector<RoadEdge> edges;
     vector<Card*> dev_cards;
-    LandVertex vertices[54];
-    RoadEdge edges[72];
 
     void init_vertices();
     void init_edges();
@@ -31,9 +31,10 @@ class Catan {
     ~Catan();
     Catan& operator=(const Catan& other);
 
-    LandVertex* get_vertices() { return vertices; }
-    RoadEdge* get_edges() { return edges; }
-    Player** get_players();
+    vector<LandVertex> get_vertices() { return vertices; }
+    vector<RoadEdge> get_edges() { return edges; }
+    vector<Player*> get_players() { return players; }
+
     void first_round();
     void play_turn();
     Player* start_game();
@@ -44,7 +45,6 @@ class Catan {
     void place_settlement(int vertex_id, Player& player, bool first_round = false);
     void place_road(int edge_id, Player& player, bool first_round = false);
     void place_city(int vertex_id, Player& player);
-    void play_dev_card(Player& player, Card& card);
 
     void roll_dice();
     void give_resources(int dices_sum);

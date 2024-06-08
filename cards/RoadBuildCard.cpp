@@ -2,19 +2,19 @@
 
 #include "../player/Player.hpp"
 
-std::string RoadBuildCard::get_description() {
+std::string RoadBuildCard::get_description() const {
     return "You may immediately place 2 free roads";
 }
 
-std::string RoadBuildCard::emoji() {
+std::string RoadBuildCard::emoji() const {
     return "🛣️";
 }
 
-CardType RoadBuildCard::type() {
+CardType RoadBuildCard::type() const {
     return CardType::ROAD_BUILDING;
 }
 
-Card* RoadBuildCard::clone() {
+Card* RoadBuildCard::clone() const {
     return new RoadBuildCard(*this);
 }
 

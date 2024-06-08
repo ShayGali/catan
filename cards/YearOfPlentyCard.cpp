@@ -2,19 +2,19 @@
 
 #include "../player/Player.hpp"
 
-std::string YearOfPlentyCard::get_description() {
+std::string YearOfPlentyCard::get_description() const {
     return "Year of Plenty: Gain any two resources from the bank.";
 }
 
-std::string YearOfPlentyCard::emoji() {
+std::string YearOfPlentyCard::emoji() const {
     return "🌟";
 }
 
-CardType YearOfPlentyCard::type() {
+CardType YearOfPlentyCard::type() const {
     return CardType::YEAR_OF_PLENTY;
 }
 
-Card* YearOfPlentyCard::clone() {
+Card* YearOfPlentyCard::clone() const {
     return new YearOfPlentyCard(*this);
 }
 
@@ -26,7 +26,7 @@ void YearOfPlentyCard::use(Catan& game, Player& player) {
               << "\t4. Wheat\n"
               << "\t5. Stone\n";
 
-    int resource1, resource2;
+    int resource1 = 0 , resource2 = 0;
     std::cin >> resource1;
     std::cin >> resource2;
 

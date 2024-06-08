@@ -7,7 +7,6 @@ CARDS_OBJECTS=cards/KngihtCard.o cards/MonopolyCard.o cards/RoadBuildCard.o card
 
 VALGRIND_FLAGS=--tool=memcheck -v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
 TIDY_FLAGS=-checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration,-cppcoreguidelines-pro-bounds-constant-array-index --warnings-as-errors=-* --
-
 PROG=catan
 
 .PHONY: clean run tidy test valgrind catan game_piece player cards
@@ -29,9 +28,9 @@ valgrind: $(PROG)
 
 tidy:
 	clang-tidy Catan.cpp Catan.hpp $(TIDY_FLAGS) 
-	# make -C game_piece tidy
-	# make -C player tidy
-	# make -C cards tidy
+	make -C game_piece tidy
+	make -C player tidy
+	make -C cards tidy
 
 Catan.o: Catan.cpp
 	$(CXX) $(CXXFLAGS) -c Catan.cpp

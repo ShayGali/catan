@@ -1,18 +1,17 @@
 #include "VictoryPointCard.hpp"
 
-
-std::string VictoryPointCard::get_description() {
+std::string VictoryPointCard::get_description() const {
     return "This card gives you 1 victory point";
 }
 
-std::string VictoryPointCard::emoji() {
+std::string VictoryPointCard::emoji() const {
     return "🏆";
 }
 
-CardType VictoryPointCard::type(){
+CardType VictoryPointCard::type() const {
     return CardType::VICTORY_POINT;
 }
 
-Card* VictoryPointCard::clone() {
+Card* VictoryPointCard::clone() const {
     return new VictoryPointCard(*this);
 }

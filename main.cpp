@@ -135,8 +135,8 @@ void real_game_with_demo_start() {
 }
 
 int main() {
-    demo_first_round();
-    // real_game_with_demo_start();
+    // demo_first_round();
+    real_game_with_demo_start();
     // real_game();
 
     // Player player1(PlayerColor::RED);

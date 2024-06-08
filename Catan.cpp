@@ -10,18 +10,9 @@
 #include "cards/VictoryPointCard.hpp"
 #include "cards/YearOfPlentyCard.hpp"
 
-Catan::Catan(Player& player1, Player& player2, Player& player3) 
-: players{&player1, &player2, &player3}, vertices{}, edges{} {
-    // seed the random number generator
-    srand(time(0));
+Catan::Catan(Player& player1, Player& player2, Player& player3)
+    : players{&player1, &player2, &player3}, vertices(54), edges(72), dev_cards(14) {
     current_player_index = 0;
-    for (int i = 0; i < 54; i++) {
-        vertices[i] = LandVertex(i);
-    }
-
-    for (int i = 0; i < 72; i++) {
-        edges[i] = RoadEdge(i);
-    }
 
     init_vertices();
     init_edges();
@@ -81,10 +72,6 @@ Catan& Catan::operator=(const Catan& other) {
     return *this;
 }
 
-Player** Catan::get_players() {
-    return players;
-}
-
 void Catan::first_round() {
     display_board();
     for (int i = 0; i < NUM_PLAYERS; i++) {
@@ -95,7 +82,7 @@ void Catan::first_round() {
         display_board();
     }
     for (int i = NUM_PLAYERS - 1; i >= 0; i--) {
-        if (i != NUM_PLAYERS - 1){
+        if (i != NUM_PLAYERS - 1) {
             cout << players[i]->get_color() << " turn\n";
         }
         int vertex_id = players[i]->place_settlement(*this, true);
@@ -252,10 +239,6 @@ void Catan::place_city(int vertex_id, Player& player) {
     player.add_victory_points(1);
 }
 
-void Catan::play_dev_card(Player& player, Card& card) {
-    throw std::logic_error("Not implemented");
-}
-
 void Catan::make_trade_offer(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<Card*>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<CardType, int>>& request_dev) {
     // check if the player has enough resources
     for (int i = 0; i < offer_res.size(); i++) {
@@ -372,7 +355,7 @@ void Catan::roll_dice() {
     std::cout << "Dice 1: " << dice_1
               << "\nDice 2: " << dice_2
               << "\nSum: " << sum << std::endl;
-
+    sum = 7;
     if (sum == 7) {
         return_resources_on_seven_roll();
     } else {
@@ -452,7 +435,7 @@ void Catan::use_dev_card(Player& player, Card* card) {
 }
 
 Player* Catan::start_game() {
-    Player* winner;
+    Player* winner = nullptr;
     first_round();
     while ((winner = is_game_over()) == nullptr) {
         play_turn();
@@ -461,6 +444,11 @@ Player* Catan::start_game() {
 }
 
 void Catan::init_vertices() {
+    // initialize the vertices
+    for (int i = 0; i < 54; i++) {
+        vertices[i] = LandVertex(i);
+    }
+
     // first vertex row
     vertices[0].set_adjacent_vertex(&vertices[3], &vertices[4], nullptr);
     vertices[1].set_adjacent_vertex(&vertices[4], &vertices[5], nullptr);
@@ -607,6 +595,11 @@ void Catan::init_vertices() {
 }
 
 void Catan::init_edges() {
+    // initialize the edges
+    for (int i = 0; i < 72; i++) {
+        edges[i] = RoadEdge(i);
+    }
+
     // first edge row
     edges[0].set_adjacent_edge(&edges[1], &edges[6], nullptr, nullptr);
     edges[1].set_adjacent_edge(&edges[0], &edges[2], &edges[7], nullptr);

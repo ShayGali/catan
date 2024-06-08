@@ -3,19 +3,19 @@
 #include "../Catan.hpp"
 #include "../player/Player.hpp"
 
-std::string MonopolyCard::get_description() {
+std::string MonopolyCard::get_description() const {
     return "Monopoly: When you play this card, you choose a resource type. All other players must give you all of their resources of that type.";
 }
 
-std::string MonopolyCard::emoji() {
+std::string MonopolyCard::emoji() const {
     return "🏦";
 }
 
-CardType MonopolyCard::type() {
+CardType MonopolyCard::type() const {
     return CardType::MONOPOLY;
 }
 
-Card* MonopolyCard::clone() {
+Card* MonopolyCard::clone() const {
     return new MonopolyCard(*this);
 }
 
@@ -28,7 +28,7 @@ void MonopolyCard::use(Catan& game, Player& player) {
          << "\t4. Wheat\n"
          << "\t5. Stone\n";
 
-    int resource_type;
+    int resource_type = 0;
     std::cin >> resource_type;
 
     if (resource_type < 1 || resource_type > 5) {

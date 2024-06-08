@@ -13,15 +13,14 @@ enum class CardType {
     YEAR_OF_PLENTY
 };
 
-
 class Card {
    public:
-    virtual std::string get_description() = 0;
-    virtual std::string emoji() = 0;
-    virtual CardType type() = 0;
-    virtual Card* clone() = 0;
+    virtual std::string get_description() const = 0;
+    virtual std::string emoji() const = 0;
+    virtual CardType type() const = 0;
+    virtual Card* clone() const = 0;
     virtual ~Card() = default;
-    
+
     static CardType from_int(int type) {
         switch (type) {
             case 0:

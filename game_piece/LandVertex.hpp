@@ -16,12 +16,12 @@ class LandVertex {
     int id;
     Player* owner;
     bool isCity;
-    LandVertex* adjacentVertices[3];
-    RoadEdge* adjacentEdges[3];
-    pair<resource, int> resources[3];  // Changed the variable name from 'resource' to 'resources'
+    vector<LandVertex*> adjacentVertices;
+    vector<RoadEdge*> adjacentEdges;
+    vector<pair<resource, int>> resources;
 
    public:
-    LandVertex() = default;
+   LandVertex();
     LandVertex(int id);
 
     void set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2, LandVertex* vertex3);
@@ -34,14 +34,14 @@ class LandVertex {
 
     RoadEdge* get_adjacent_edge(int index);
 
-    pair<resource, int>* get_resources();
+    vector<pair<resource, int>> get_resources();
 
-    int get_id();
+    int get_id() const;
 
     Player* get_owner();
     void set_owner(Player* player);
 
-    bool get_isCity();
+    bool get_isCity() const;
 
     void upgrade_to_city();
 

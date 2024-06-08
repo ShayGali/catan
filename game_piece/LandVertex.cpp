@@ -2,9 +2,10 @@
 
 #include <iostream>
 
-LandVertex::LandVertex(int id) : id(id) {
-    this->owner = nullptr;
-    this->isCity = false;
+LandVertex::LandVertex()
+    : id(-1), owner(nullptr), isCity(false){}
+LandVertex::LandVertex(int id)
+    : id(id), owner(nullptr), isCity(false), adjacentVertices(3, nullptr), adjacentEdges(3, nullptr), resources(3) {
 }
 
 void LandVertex::set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2, LandVertex* vertex3) {
@@ -25,7 +26,6 @@ void LandVertex::set_resource(resource res1, int num1, resource res2, int num2, 
     this->resources[2] = std::make_pair(res3, num3);
 }
 
-
 LandVertex* LandVertex::get_adjacent_vertex(int index) {
     return this->adjacentVertices[index];
 }
@@ -34,11 +34,11 @@ RoadEdge* LandVertex::get_adjacent_edge(int index) {
     return this->adjacentEdges[index];
 }
 
-pair<resource, int>* LandVertex::get_resources() {
+vector<pair<resource, int>> LandVertex::get_resources() {
     return this->resources;
 }
 
-int LandVertex::get_id() {
+int LandVertex::get_id() const {
     return this->id;
 }
 
@@ -50,7 +50,7 @@ void LandVertex::set_owner(Player* player) {
     this->owner = player;
 }
 
-bool LandVertex::get_isCity() {
+bool LandVertex::get_isCity() const {
     return this->isCity;
 }
 
@@ -65,9 +65,14 @@ std::string LandVertex::get_settlement_string() {
     }
     std::string player_color_code = this->owner->get_color_code();
     std::string RESET_COLOR = "\033[0m";
+
+    string res = player_color_code;
+
     if (this->isCity) {
-        return player_color_code + "🏙" + RESET_COLOR;
+        res += "🏙" + RESET_COLOR;
     } else {
-        return player_color_code + "🏘" + RESET_COLOR;
+        res += "🏘" + RESET_COLOR;
     }
+
+    return res;
 }

@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <stdexcept>
+
 // https://stackoverflow.com/questions/21295935/can-a-c-enum-class-have-methods
 
 /**
