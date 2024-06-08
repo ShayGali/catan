@@ -2,6 +2,8 @@
 #include <iostream>
 
 #include "../Catan.hpp"
+#include "../cards/KngihtCard.hpp"
+#include "../cards/VictoryPointCard.hpp"
 #include "../player/Player.hpp"
 #include "doctest.h"
 using namespace std;
@@ -278,5 +280,168 @@ TEST_CASE("Buy dev card") {
         Catan catan(player1, player1, player1);
 
         CHECK_THROWS(player1.buy_dev_card(catan));
+    }
+}
+
+TEST_CASE("trade tests") {
+    Player player1(PlayerColor::RED);
+    Player player2(PlayerColor::BLUE);
+    Player player3(PlayerColor::YELLOW);
+    Catan catan(player1, player2, player3);
+
+    SUBCASE("simple trade - RED will trade 1 WOOD & 1 victory point card for 1 STONE & 1 knight card") {
+        // the card will be free in the player destructor
+        Card* k_card = new KnightCard();
+        Card* vp_card = new VictoryPointCard();
+
+        player1.add_resource(resource::WOOD, 1);
+        player1.add_resource(resource::CLAY, 1);
+
+        player1.add_dev_card(vp_card);
+        player1.add_victory_points(1);
+
+        player2.add_resource(resource::STONE, 1);
+        player2.add_dev_card(k_card);
+        player2.add_knight();
+
+        vector<pair<resource, int>> offer_res = {{resource::WOOD, 1}};
+        vector<Card*> offer_dev = {vp_card};
+        vector<pair<resource, int>> request = {{resource::STONE, 1}};
+        vector<pair<CardType, int>> request_dev = {{CardType::KNIGHT, 1}};
+
+        // make sure that all the before are good
+
+        // player1
+        CHECK(player1.get_resource_count(resource::WOOD) == 1);
+        CHECK(player1.get_resource_count(resource::CLAY) == 1);
+        CHECK(player1.get_dev_cards().size() == 1);
+        CHECK(player1.get_dev_cards()[0] == vp_card);
+        CHECK(player1.get_victory_points() == 1);
+        CHECK(player1.get_knights() == 0);
+
+        // player2
+        CHECK(player2.get_resource_count(resource::STONE) == 1);
+        CHECK(player2.get_dev_cards().size() == 1);
+        CHECK(player2.get_dev_cards()[0] == k_card);
+        CHECK(player2.get_knights() == 1);
+        CHECK(player2.get_victory_points() == 0);
+
+        // redirect cin to input buffer
+        istringstream input("y\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        catan.make_trade_offer(player1, offer_res, offer_dev, request, request_dev);
+
+        // redirect cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the trade is done
+
+        // player1
+        CHECK(player1.get_resource_count(resource::WOOD) == 0);
+        CHECK(player1.get_resource_count(resource::CLAY) == 1);
+        CHECK(player1.get_resource_count(resource::STONE) == 1);
+        CHECK(player1.get_dev_cards().size() == 1);
+        CHECK(player1.get_dev_cards()[0] == k_card);
+        CHECK(player1.get_victory_points() == 0);
+        CHECK(player1.get_knights() == 1);
+
+        // player2
+        CHECK(player2.get_resource_count(resource::STONE) == 0);
+        CHECK(player2.get_resource_count(resource::WOOD) == 1);
+        CHECK(player2.get_dev_cards().size() == 1);
+        CHECK(player2.get_dev_cards()[0] == vp_card);
+        CHECK(player2.get_knights() == 0);
+        CHECK(player2.get_victory_points() == 1);
+    }
+
+    SUBCASE("no one will accept the trade") {
+        player1.add_resource(resource::WOOD, 1);
+
+        vector<pair<resource, int>> offer_res = {{resource::WOOD, 1}};
+        vector<Card*> offer_dev = {};
+        vector<pair<resource, int>> request = {{resource::STONE, 1}};
+        vector<pair<CardType, int>> request_dev = {};
+
+        // redirect cin to input buffer
+        istringstream input("n n\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        catan.make_trade_offer(player1, offer_res, offer_dev, request, request_dev);
+
+        // redirect cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the trade is not done
+        CHECK(player1.get_resource_count(resource::WOOD) == 1);
+    }
+
+    SUBCASE("player dont have enough resources to make offer") {
+        Card* k_card = new KnightCard();  // the card will be free in the end of the test
+        player1.add_resource(resource::WOOD, 1);
+
+        vector<pair<resource, int>> offer_res = {{resource::WOOD, 2}};
+        vector<Card*> offer_dev = {};
+        vector<pair<resource, int>> request = {{resource::STONE, 1}};
+        vector<pair<CardType, int>> request_dev = {};
+
+        CHECK_THROWS(catan.make_trade_offer(player1, offer_res, offer_dev, request, request_dev));
+
+        offer_res = {};
+        offer_dev = {k_card};
+        CHECK_THROWS(catan.make_trade_offer(player1, offer_res, offer_dev, request, request_dev));
+
+        delete k_card;
+    }
+
+    SUBCASE("player try to accept the trade with out enough resources") {
+        player1.add_resource(resource::WOOD, 1);
+        player1.add_resource(resource::STONE, 2);
+        player2.add_resource(resource::STONE, 1);
+
+        vector<pair<resource, int>> offer_res = {{resource::WOOD, 1}};
+        vector<Card*> offer_dev = {};
+        vector<pair<resource, int>> request = {{resource::STONE, 2}};
+        vector<pair<CardType, int>> request_dev = {};
+
+        // redirect cin to input buffer
+        istringstream input("y y\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        catan.make_trade_offer(player1, offer_res, offer_dev, request, request_dev);
+
+        // redirect cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the trade is not done
+        CHECK(player1.get_resource_count(resource::WOOD) == 1);
+        CHECK(player1.get_resource_count(resource::STONE) == 2);
+        CHECK(player2.get_resource_count(resource::STONE) == 1);
+    }
+
+    SUBCASE("player try to accept the trade with out enough dev cards") {
+        player1.add_resource(resource::WOOD, 1);
+        player2.add_resource(resource::STONE, 1);
+
+        vector<pair<resource, int>> offer_res = {{resource::WOOD, 1}};
+        vector<Card*> offer_dev = {};
+        vector<pair<resource, int>> request = {{resource::STONE, 1}};
+        vector<pair<CardType, int>> request_dev = {{CardType::KNIGHT, 1}};
+
+        // redirect cin to input buffer
+        istringstream input("y y\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        catan.make_trade_offer(player1, offer_res, offer_dev, request, request_dev);
+
+        // redirect cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the trade is not done
+        CHECK(player1.get_resource_count(resource::WOOD) == 1);
+        CHECK(player2.get_resource_count(resource::STONE) == 1);
+        CHECK(player1.get_dev_cards().size() == 0);
+        CHECK(player1.get_knights() == 0);
+        CHECK(player2.get_dev_cards().size() == 0);
     }
 }

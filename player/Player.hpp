@@ -54,14 +54,15 @@ class Player {
     void place_road(Catan& game, bool first_round = false);
     void place_city(Catan& game);
 
-    bool trade_request(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<pair<Card*, int>>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<CardType, int>>& request_dev);
+    bool trade_request(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<Card*>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<CardType, int>>& request_dev);
     void make_trade(Catan& game);
 
     void display_dev_cards();
     void use_dev_card(Catan& game);
     void use_dev_card(Catan& game, Card* card);
     void buy_dev_card(Catan& catan);
-    Card* remove_dev_card(CardType type);
+    Card* get_dev_card(CardType type);
+    Card* remove_dev_card(Card* card);
     void add_dev_card(Card* card);
     void add_knight();
     void remove_knight();

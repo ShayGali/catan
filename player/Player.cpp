@@ -361,7 +361,7 @@ void Player::place_city(Catan &game) {
 
 void Player::make_trade(Catan &game) {
     vector<pair<resource, int>> offer_res;
-    vector<pair<Card *, int>> offer_dev;
+    vector<Card *> offer_dev;
 
     display_resources();
 
@@ -420,7 +420,7 @@ void Player::make_trade(Catan &game) {
                 continue;
             }
             selected[index - 1] = true;
-            offer_dev.push_back({devCards[index - 1], 1});
+            offer_dev.push_back(devCards[index - 1]);
         }
     }
 
@@ -480,7 +480,7 @@ void Player::make_trade(Catan &game) {
     }
 }
 
-bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<pair<Card *, int>> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<CardType, int>> &request_dev) {
+bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<Card *> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<CardType, int>> &request_dev) {
     if (offer_res.empty() && offer_dev.empty() && request_res.empty() && request_dev.empty()) {
         cout << "Invalid trade request\n";
         return false;
@@ -495,7 +495,7 @@ bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &of
     if (!offer_dev.empty()) {
         cout << "Offered development cards: \n";
         for (auto &dev : offer_dev) {
-            cout << "\t" << dev.second << " " << dev.first->emoji() << "\n";
+            cout << "\t" << dev->emoji() << "\n";
         }
     }
 
@@ -587,12 +587,21 @@ int Player::get_knights() {
     return knights_counter;
 }
 
-Card *Player::remove_dev_card(CardType type) {
+Card *Player::get_dev_card(CardType type) {
     for (int i = 0; i < devCards.size(); i++) {
         if (devCards[i]->type() == type) {
-            Card *card = devCards[i];
+            return devCards[i];
+        }
+    }
+    return nullptr;
+}
+
+Card *Player::remove_dev_card(Card *card) {
+    for (int i = 0; i < devCards.size(); i++) {
+        if (devCards[i] == card) {
+            Card *removed = devCards[i];
             devCards.erase(devCards.begin() + i);
-            return card;
+            return removed;
         }
     }
     return nullptr;
