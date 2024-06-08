@@ -10,8 +10,23 @@
 #include "cards/VictoryPointCard.hpp"
 #include "cards/YearOfPlentyCard.hpp"
 
-Catan::Catan(Player& player1, Player& player2, Player& player3) : players{&player1, &player2, &player3} {
-    init_game();
+Catan::Catan(Player& player1, Player& player2, Player& player3) 
+: players{&player1, &player2, &player3}, vertices{}, edges{} {
+    // seed the random number generator
+    srand(time(0));
+    current_player_index = 0;
+    for (int i = 0; i < 54; i++) {
+        vertices[i] = LandVertex(i);
+    }
+
+    for (int i = 0; i < 72; i++) {
+        edges[i] = RoadEdge(i);
+    }
+
+    init_vertices();
+    init_edges();
+    init_board();
+    init_dev_cards();
 }
 
 Catan::Catan(const Catan& other) {
@@ -80,8 +95,9 @@ void Catan::first_round() {
         display_board();
     }
     for (int i = NUM_PLAYERS - 1; i >= 0; i--) {
-        if (i != NUM_PLAYERS - 1)
+        if (i != NUM_PLAYERS - 1){
             cout << players[i]->get_color() << " turn\n";
+        }
         int vertex_id = players[i]->place_settlement(*this, true);
         LandVertex& vertex = vertices[vertex_id];
         for (int j = 0; j < 3; j++) {
@@ -433,23 +449,6 @@ void Catan::use_dev_card(Player& player, Card* card) {
         throw std::invalid_argument("card is not PromotionCard");
     }
     cast_card->use(*this, player);
-}
-
-void Catan::init_game() {
-    // seed random number generator
-    srand(time(0));
-    current_player_index = 0;
-    for (int i = 0; i < 54; i++) {
-        vertices[i] = LandVertex(i);
-    }
-
-    for (int i = 0; i < 72; i++) {
-        edges[i] = RoadEdge(i);
-    }
-    init_vertices();
-    init_edges();
-    init_board();
-    init_dev_cards();
 }
 
 Player* Catan::start_game() {
