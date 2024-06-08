@@ -226,6 +226,7 @@ TEST_CASE("place city") {
     }
 }
 
+TEST_CASE("roll dice") {}
 TEST_CASE("give resources on roll") {
     Player player1(PlayerColor::RED);
     Player player2(PlayerColor::BLUE);
@@ -256,6 +257,8 @@ TEST_CASE("give resources on roll") {
     CHECK((player1.get_resource_count(resource::WHEAT) == 3 && player1.get_resource_count(resource::STONE) == 0 && player1.get_resource_count(resource::CLAY) == 0 && player1.get_resource_count(resource::SHEEP) == 0 && player1.get_resource_count(resource::WOOD) == 0));
     CHECK((player2.get_resource_count(resource::WHEAT) == 0 && player2.get_resource_count(resource::STONE) == 1 && player2.get_resource_count(resource::CLAY) == 1 && player2.get_resource_count(resource::SHEEP) == 0 && player1.get_resource_count(resource::WOOD) == 0));
 }
+
+TEST_CASE("7 roll") {}
 
 TEST_CASE("Buy dev card") {
     SUBCASE("simple buy dev card") {
@@ -445,3 +448,11 @@ TEST_CASE("trade tests") {
         CHECK(player2.get_dev_cards().size() == 0);
     }
 }
+
+TEST_CASE("use promotion card") {
+    SUBCASE("Monopoly") {}
+    SUBCASE("Year of plenty") {}
+    SUBCASE("Road building") {}
+}
+TEST_CASE("buy dev card") {}
+TEST_CASE("play dev card") {}
