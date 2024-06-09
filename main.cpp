@@ -1,31 +1,10 @@
 #include <iostream>
+#include <sstream>
 
 #include "Catan.hpp"
 #include "player/Player.hpp"
 
 using namespace std;
-
-void place_things() {
-    Player player1(PlayerColor::RED);
-    Catan catan(player1, player1, player1);
-    int index = 0;
-    while (index != -1) {
-        try {
-            catan.display_board();
-            cout << "settlement index: ";
-            cin >> index;
-            catan.place_settlement(index, player1, true);
-            catan.display_board();
-            cout << "road index: ";
-            cin >> index;
-            catan.place_road(index, player1, true);
-
-            catan.display_board();
-        } catch (const std::exception& e) {
-            cout << e.what() << endl;
-        }
-    }
-}
 
 void demo_first_round() {
     Player player1(PlayerColor::RED);
@@ -70,15 +49,6 @@ void demo_first_round() {
         catan.play_turn();
     }
     cout << "Game over! " << winner->get_color() << " wins!" << endl;
-}
-
-void place_a_city(Catan& catan, Player& player) {
-    player.add_resource(resource::WHEAT, 3);
-    player.add_resource(resource::STONE, 3);
-
-    player.display_resources();
-    catan.place_city(31, player);
-    player.display_resources();
 }
 
 void real_game() {
@@ -137,21 +107,6 @@ void real_game_with_demo_start() {
 int main() {
     // demo_first_round();
     // real_game_with_demo_start();
-    // real_game();
-
-    // Player player1(PlayerColor::RED);
-    // Catan catan(player1, player1, player1);
-
-    // player1.buy_dev_card(catan);
-    Player player1(PlayerColor::RED);
-    Catan catan(player1, player1, player1);
-    srand(1);
-    vector<Card*> cards = catan.get_dev_cards();
-    for (auto card : cards) {
-        if(card!=nullptr)
-            cout << (card->emoji()) << endl;
-        else
-            cout << "null" << endl;
-    }
+    real_game();
     return 0;
 }

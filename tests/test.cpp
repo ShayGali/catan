@@ -3,7 +3,10 @@
 
 #include "../Catan.hpp"
 #include "../cards/KngihtCard.hpp"
+#include "../cards/MonopolyCard.hpp"
+#include "../cards/RoadBuildCard.hpp"
 #include "../cards/VictoryPointCard.hpp"
+#include "../cards/YearOfPlentyCard.hpp"
 #include "../player/Player.hpp"
 #include "doctest.h"
 using namespace std;
@@ -258,19 +261,99 @@ TEST_CASE("give resources on roll") {
 }
 
 TEST_CASE("7 roll") {
-    SUBCASE("no one has more than 7 resources") {
-        Player player1(PlayerColor::RED);
-        Player player2(PlayerColor::BLUE);
-        Player player3(PlayerColor::YELLOW);
-        Catan catan(player1, player2, player3);
+    Player player1(PlayerColor::RED);
+    Player player2(PlayerColor::BLUE);
+    Player player3(PlayerColor::YELLOW);
+    Catan catan(player1, player2, player3);
+    // change the seed such thar the 7 will be rolled
+    srand(1);
 
-        // give player1 a resource to make him able to place a city
+    SUBCASE("no one has more than 7 resources") {
         player1.add_resource(resource::WHEAT, 2);
         player1.add_resource(resource::STONE, 3);
 
-        // change the seed such thar the 7 will be rolled
-        srand(1);
         catan.roll_dice();
+    }
+
+    SUBCASE("one player has more than 7 resources") {
+        player1.add_resource(resource::WOOD, 3);
+        player1.add_resource(resource::CLAY, 2);
+        player1.add_resource(resource::SHEEP, 1);
+        player1.add_resource(resource::WHEAT, 1);
+        player1.add_resource(resource::STONE, 1);
+
+        // change cin to input buffer
+        istringstream input("1 1 1 0 1\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+        catan.roll_dice();
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the resources are taken from the player
+        CHECK((player1.get_resource_count(resource::WOOD) == 2 && player1.get_resource_count(resource::CLAY) == 1 && player1.get_resource_count(resource::SHEEP) == 0 && player1.get_resource_count(resource::WHEAT) == 1 && player1.get_resource_count(resource::STONE) == 0));
+    }
+
+    SUBCASE("two players have more than 7 resources") {
+        player1.add_resource(resource::WOOD, 3);
+        player1.add_resource(resource::CLAY, 2);
+        player1.add_resource(resource::SHEEP, 1);
+        player1.add_resource(resource::WHEAT, 1);
+        player1.add_resource(resource::STONE, 1);
+
+        player2.add_resource(resource::WOOD, 3);
+        player2.add_resource(resource::CLAY, 2);
+        player2.add_resource(resource::SHEEP, 1);
+        player2.add_resource(resource::WHEAT, 1);
+        player2.add_resource(resource::STONE, 1);
+
+        // change cin to input buffer
+        istringstream input("1 1 1 0 1\n1 1 1 0 1\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+        catan.roll_dice();
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the resources are taken from the player
+        CHECK((player1.get_resource_count(resource::WOOD) == 2 && player1.get_resource_count(resource::CLAY) == 1 && player1.get_resource_count(resource::SHEEP) == 0 && player1.get_resource_count(resource::WHEAT) == 1 && player1.get_resource_count(resource::STONE) == 0));
+        CHECK((player2.get_resource_count(resource::WOOD) == 2 && player2.get_resource_count(resource::CLAY) == 1 && player2.get_resource_count(resource::SHEEP) == 0 && player2.get_resource_count(resource::WHEAT) == 1 && player2.get_resource_count(resource::STONE) == 0));
+    }
+
+    SUBCASE("player try to return wrong number of resources") {
+        player1.add_resource(resource::WOOD, 3);
+        player1.add_resource(resource::CLAY, 2);
+        player1.add_resource(resource::SHEEP, 1);
+        player1.add_resource(resource::WHEAT, 1);
+        player1.add_resource(resource::STONE, 1);
+
+        // change cin to input buffer
+        // need to return 4 resources
+        // try to return 5,0,8
+        // and then return 4
+        istringstream input("2 1 1 0 1\n0 0 0 0 0\n3 2 1 1 1\n0 1 1 1 1\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+        catan.roll_dice();
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the resources are taken from the player
+        player1.display_resources();
+        CHECK((player1.get_resource_count(resource::WOOD) == 3 && player1.get_resource_count(resource::CLAY) == 1 && player1.get_resource_count(resource::SHEEP) == 0 && player1.get_resource_count(resource::WHEAT) == 0 && player1.get_resource_count(resource::STONE) == 0));
+    }
+
+    SUBCASE("try to return more than what he has") {
+        player1.add_resource(resource::WOOD, 3);
+        player1.add_resource(resource::CLAY, 2);
+        player1.add_resource(resource::SHEEP, 1);
+        player1.add_resource(resource::WHEAT, 1);
+        player1.add_resource(resource::STONE, 1);
+
+        // change cin to input buffer
+        istringstream input("4 3 1 0 0 0\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+        catan.roll_dice();
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+        CHECK((player1.get_resource_count(resource::WOOD) == 0 && player1.get_resource_count(resource::CLAY) == 1 && player1.get_resource_count(resource::SHEEP) == 1 && player1.get_resource_count(resource::WHEAT) == 1 && player1.get_resource_count(resource::STONE) == 1));
     }
 }
 
@@ -464,9 +547,70 @@ TEST_CASE("trade tests") {
 }
 
 TEST_CASE("use promotion card") {
-    SUBCASE("Monopoly") {}
-    SUBCASE("Year of plenty") {}
-    SUBCASE("Road building") {}
+    Player player1(PlayerColor::RED), player2(PlayerColor::BLUE), player3(PlayerColor::YELLOW);
+    Catan catan(player1, player2, player3);
+
+    SUBCASE("Monopoly") {
+        MonopolyCard* monopoly = new MonopolyCard();  // the card will be free in the player destructor
+
+        // give wood to all the players
+        player1.add_resource(resource::WOOD, 1);
+        player2.add_resource(resource::WOOD, 2);
+        player3.add_resource(resource::WOOD, 1);
+
+        // give player1 a monopoly card
+        player1.add_dev_card(monopoly);
+
+        // change cin to input buffer
+        istringstream input("1\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        player1.use_dev_card(catan, monopoly);
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the resources are taken from the players
+        CHECK(player1.get_resource_count(resource::WOOD) == 4);
+        CHECK(player2.get_resource_count(resource::WOOD) == 0);
+        CHECK(player3.get_resource_count(resource::WOOD) == 0);
+    }
+
+    SUBCASE("Year of plenty") {
+        YearOfPlentyCard* year_of_plenty = new YearOfPlentyCard();  // the card will be free in the player destructor
+
+        // give player1 a year of plenty card
+        player1.add_dev_card(year_of_plenty);
+
+        // change cin to input buffer
+        istringstream input("1 2\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        player1.use_dev_card(catan, year_of_plenty);
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // check that the resources are taken from the players
+        CHECK(player1.get_resource_count(resource::WOOD) == 1);
+        CHECK(player1.get_resource_count(resource::CLAY) == 1);
+    }
+    SUBCASE("Road building") {
+        // place a settlement and a road
+        catan.place_settlement(8, player1, true);
+
+        // give player1 a road building card
+        RoadBuildCard* road_building = new RoadBuildCard();  // the card will be free in the player destructor
+
+        player1.add_dev_card(road_building);
+
+        // change cin to input buffer
+        istringstream input("12 13\n");
+        streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
+
+        player1.use_dev_card(catan, road_building);
+        // change cin back to standard input
+        cin.rdbuf(prevcinbuf);
+
+        // make sure that the roads are placed
+        CHECK((catan.get_edges()[12].get_owner() == &player1 && catan.get_edges()[13].get_owner() == &player1));
+    }
 }
-TEST_CASE("buy dev card") {}
-TEST_CASE("play dev card") {}
