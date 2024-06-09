@@ -151,9 +151,9 @@ void run_first_round() {
 }
 
 int main() {
-    // demo_first_round();
+    demo_first_round();
     // real_game_with_demo_start();
     // real_game();
-    run_first_round();
+    // run_first_round();
     return 0;
 }
