@@ -123,9 +123,9 @@ void real_game_with_demo_start() {
 
     player3.add_resource(resource::WHEAT, 1);
 
-    player1.add_resource(resource::WHEAT, 2);
+    player1.add_resource(resource::WHEAT, 1);
     player1.add_resource(resource::SHEEP, 1);
-    player1.add_resource(resource::STONE, 3);
+    player1.add_resource(resource::STONE, 1);
 
     Player* winner;
     while ((winner = catan.is_game_over()) == nullptr) {
@@ -136,12 +136,22 @@ void real_game_with_demo_start() {
 
 int main() {
     // demo_first_round();
-    real_game_with_demo_start();
+    // real_game_with_demo_start();
     // real_game();
 
     // Player player1(PlayerColor::RED);
     // Catan catan(player1, player1, player1);
 
     // player1.buy_dev_card(catan);
+    Player player1(PlayerColor::RED);
+    Catan catan(player1, player1, player1);
+    srand(1);
+    vector<Card*> cards = catan.get_dev_cards();
+    for (auto card : cards) {
+        if(card!=nullptr)
+            cout << (card->emoji()) << endl;
+        else
+            cout << "null" << endl;
+    }
     return 0;
 }

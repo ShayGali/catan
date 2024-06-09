@@ -34,6 +34,7 @@ class Catan {
     vector<LandVertex> get_vertices() { return vertices; }
     vector<RoadEdge> get_edges() { return edges; }
     vector<Player*> get_players() { return players; }
+    vector<Card*> get_dev_cards() { return dev_cards; }
 
     void first_round();
     void play_turn();

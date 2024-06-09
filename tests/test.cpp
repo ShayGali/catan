@@ -226,7 +226,6 @@ TEST_CASE("place city") {
     }
 }
 
-TEST_CASE("roll dice") {}
 TEST_CASE("give resources on roll") {
     Player player1(PlayerColor::RED);
     Player player2(PlayerColor::BLUE);
@@ -258,7 +257,22 @@ TEST_CASE("give resources on roll") {
     CHECK((player2.get_resource_count(resource::WHEAT) == 0 && player2.get_resource_count(resource::STONE) == 1 && player2.get_resource_count(resource::CLAY) == 1 && player2.get_resource_count(resource::SHEEP) == 0 && player1.get_resource_count(resource::WOOD) == 0));
 }
 
-TEST_CASE("7 roll") {}
+TEST_CASE("7 roll") {
+    SUBCASE("no one has more than 7 resources") {
+        Player player1(PlayerColor::RED);
+        Player player2(PlayerColor::BLUE);
+        Player player3(PlayerColor::YELLOW);
+        Catan catan(player1, player2, player3);
+
+        // give player1 a resource to make him able to place a city
+        player1.add_resource(resource::WHEAT, 2);
+        player1.add_resource(resource::STONE, 3);
+
+        // change the seed such thar the 7 will be rolled
+        srand(1);
+        catan.roll_dice();
+    }
+}
 
 TEST_CASE("Buy dev card") {
     SUBCASE("simple buy dev card") {

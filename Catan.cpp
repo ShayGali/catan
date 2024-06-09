@@ -11,7 +11,10 @@
 #include "cards/YearOfPlentyCard.hpp"
 
 Catan::Catan(Player& player1, Player& player2, Player& player3)
-    : players{&player1, &player2, &player3}, vertices(54), edges(72), dev_cards(14) {
+    : players{&player1, &player2, &player3}, vertices(54), edges(72) {
+    // initialize the random seed
+    // srand(time(nullptr));
+    srand(1);
     current_player_index = 0;
 
     init_vertices();
@@ -355,7 +358,6 @@ void Catan::roll_dice() {
     std::cout << "Dice 1: " << dice_1
               << "\nDice 2: " << dice_2
               << "\nSum: " << sum << std::endl;
-    sum = 7;
     if (sum == 7) {
         return_resources_on_seven_roll();
     } else {
@@ -407,6 +409,9 @@ Card* Catan::buy_dev_card(Player& player) {
     int num_of_cards = dev_cards.size();
     int rand_index = rand() % num_of_cards;
     Card* card = dev_cards[rand_index];
+    cout << (rand_index) << " " << num_of_cards << "\n";
+    cout << card << "\n";
+
 
     // remove card from deck
     dev_cards.erase(dev_cards.begin() + rand_index);
