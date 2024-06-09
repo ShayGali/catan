@@ -14,6 +14,7 @@ Player::Player(PlayerColor color) : resourceCount(5, 0) {
 }
 
 Player::Player(const Player &other) {
+    // deep copy the other player's data
     color = other.color;
     victoryPoints = other.victoryPoints;
     knights_counter = other.knights_counter;
@@ -21,13 +22,14 @@ Player::Player(const Player &other) {
         resourceCount[i] = other.resourceCount[i];
     }
 
-    for (const auto* card : other.devCards) {
-        devCards.push_back(card->clone());
+    for (const auto *card : other.devCards) {
+        devCards.push_back(card->clone());  // clone the card
     }
 }
 
 Player::~Player() {
-    for (auto* card : devCards) {
+    // free the memory allocated for the development cards
+    for (auto *card : devCards) {
         delete card;
     }
 }
@@ -59,7 +61,7 @@ Player &Player::operator=(const Player &other) {
 
 void Player::play_turn(Catan &game) {
     char choice = 0;
-    while (true) {
+    while (true) {  // loop until the player rolls the dice or uses a development card
         cout << "Choose an action:\n"
              << "\t1. Roll dice\n"
              << "\t2. Use development card\n"
@@ -93,11 +95,10 @@ void Player::play_turn(Catan &game) {
             cout << "Knights: " << knights_counter << "\n";
         } else {
             cout << "Invalid choice\n";
-            continue;
         }
     };
 
-    while (true) {
+    while (true) {  // loop until the player ends his turn or uses a development card
         cout << "Choose an action:\n"
              << "\t1. Place settlement\n"
              << "\t2. Place road\n"
@@ -204,6 +205,9 @@ std::string Player::get_color_code() const {
 }
 
 int Player::get_resource_count(resource resource) const {
+    if (resource == resource::NONE || resource == resource::DESERT) {
+        return 0;
+    }
     return resourceCount[resource.get_int()];
 }
 
@@ -244,6 +248,7 @@ void Player::display_dev_cards() const {
 }
 
 void Player::buy_dev_card(Catan &game) {
+    // check if the player has enough resources
     if (get_resource_count(resource::WHEAT) < 1 || get_resource_count(resource::SHEEP) < 1 || get_resource_count(resource::STONE) < 1) {
         throw std::runtime_error("Not enough resources to buy a development card");
     }
@@ -252,6 +257,7 @@ void Player::buy_dev_card(Catan &game) {
     Card *card = game.buy_dev_card(*this);
     devCards.push_back(card);
 
+    // display the card bought
     cout << "You got: " << card->emoji() << "\n";
     cout << "Card description: " << card->get_description() << "\n";
 }
@@ -351,7 +357,7 @@ void Player::make_trade(Catan &game) {
     display_resources();
 
     int choice = 0;
-    while (true) {
+    while (true) {  // loop until the player ends the resources selection
         cout << "Choose a offer resource (enter -1 to end the resources selection)\n";
         cin >> choice;
         if (choice == -1) {
@@ -378,7 +384,7 @@ void Player::make_trade(Catan &game) {
         offer_res.push_back({resource::from_int(choice - 1), amount});
     }
 
-    if (!devCards.empty()) {
+    if (!devCards.empty()) {  // if the player has development cards
         vector<bool> selected(devCards.size(), false);
 
         cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
@@ -386,7 +392,7 @@ void Player::make_trade(Catan &game) {
             cout << (i + 1) << ". " << devCards[i]->emoji() << "\n";
         }
 
-        while (true) {
+        while (true) {  // loop until the player ends the development cards selection
             cout << "Choose a offer development card (enter -1 to end the development cards selection)\n";
             cout << "Enter development card index\n";
             int index = 0;
@@ -412,7 +418,7 @@ void Player::make_trade(Catan &game) {
     vector<pair<resource, int>> request_res;
     vector<pair<CardType, int>> request_dev;
 
-    while (true) {
+    while (true) {  // loop until the player ends the resources selection
         cout << "Choose a request resource (enter -1 to end the resources selection)\n";
         cout << "1. Wood, 2. Clay, 3. Sheep, 4. Wheat, 5. Stone\n";
         cin >> choice;
@@ -435,7 +441,7 @@ void Player::make_trade(Catan &game) {
         request_res.push_back({resource::from_int(choice - 1), amount});
     }
 
-    while (true) {
+    while (true) {  // loop until the player ends the development cards selection
         cout << "Choose a request development card (enter -1 to end the development cards selection)\n";
         cout << "1. Knight, 2. Victory Point, 3. Road Building, 4. Monopoly, 5. Year of Plenty\n";
         cin >> choice;
@@ -459,6 +465,7 @@ void Player::make_trade(Catan &game) {
     }
 
     try {
+        // call the game object to make the trade
         game.make_trade_offer(*this, offer_res, offer_dev, request_res, request_dev);
     } catch (std::invalid_argument &e) {
         cout << e.what() << "\n";
@@ -466,10 +473,13 @@ void Player::make_trade(Catan &game) {
 }
 
 bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &offer_res, const vector<Card *> &offer_dev, const vector<pair<resource, int>> &request_res, const vector<pair<CardType, int>> &request_dev) {
+    // if the trade request is invalid we return false
     if (offer_res.empty() && offer_dev.empty() && request_res.empty() && request_dev.empty()) {
         cout << "Invalid trade request\n";
         return false;
     }
+
+    // display the trade offer
     cout << "Player " << get_color() << " received a trade request from player " << trader.get_color() << "\n";
     if (!offer_res.empty()) {
         cout << "Offered resources: \n";
@@ -484,6 +494,7 @@ bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &of
         }
     }
 
+    // display the trade request
     if (!request_res.empty()) {
         cout << "Requested resources: \n";
         for (const auto &res : request_res) {
@@ -516,7 +527,7 @@ void Player::use_dev_card(Catan &game) {
     }
     display_dev_cards();
 
-    while (true) {
+    while (true) {  // loop until the player chooses a development card to use
         cout << "Enter 1 to use a development card, 2 to show info about a development card, -1 to cancel\n";
         int choice = 0;
         cin >> choice;
@@ -538,6 +549,7 @@ void Player::use_dev_card(Catan &game) {
         }
     }
 
+    // ask the player to choose a development card to use
     cout << "Choose a development card to use\n";
     int index = 0;
     cin >> index;
@@ -545,8 +557,10 @@ void Player::use_dev_card(Catan &game) {
         cout << "Invalid index\n";
         return;
     }
+
     Card *card = devCards[index - 1];
 
+    // call the function that actually uses the development card
     use_dev_card(game, card);
 }
 
@@ -633,7 +647,7 @@ void Player::return_resources_on_seven_roll() {
     cout << "You must return " << total_to_return << " resources\n";
 
     display_resources();
-    while (true) {
+    while (true) {  // get the resources to return from the player until he returns exactly half of his resources
         int sheep_count = 0;
         int wheat_count = 0;
         int stone_count = 0;
@@ -712,6 +726,7 @@ void Player::return_resources_on_seven_roll() {
             continue;
         }
 
+        // return the resources
         use_resource(resource::WOOD, wood_count);
         use_resource(resource::CLAY, clay_count);
         use_resource(resource::SHEEP, sheep_count);

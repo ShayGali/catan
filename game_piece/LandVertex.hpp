@@ -11,6 +11,10 @@ class Player;    // Forward declaration
 
 using std::pair;
 
+/**
+ * @brief A class representing a vertex on the land.
+ * will store the resources that the vertex can produce, the adjacent vertices and edges, and the owner of the vertex.
+ */
 class LandVertex {
    private:
     int id;
@@ -21,7 +25,10 @@ class LandVertex {
     vector<pair<resource, int>> resources;
 
    public:
-   LandVertex();
+    /**
+     * @brief dummy default constructor so we can create a vector of LandVertex in fixed size
+     */
+    LandVertex();
     LandVertex(int id);
 
     void set_adjacent_vertex(LandVertex* vertex1, LandVertex* vertex2, LandVertex* vertex3);
@@ -41,9 +48,19 @@ class LandVertex {
     Player* get_owner();
     void set_owner(Player* player);
 
-    bool get_isCity() const;
-
+    /**
+     * @brief check if the vertex is a city
+     */
+    bool is_contains_city() const;
+    /**
+     * @brief make the vertex a city
+     */
     void upgrade_to_city();
 
+    /**
+     * @brief get the string representation of the settlement.
+     * E - empty, 🏘 - settlement, 🏙 - city.
+     * the emoji is colored according to the player color
+     */
     std::string get_settlement_string();
 };

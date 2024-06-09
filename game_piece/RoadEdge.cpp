@@ -34,13 +34,13 @@ void RoadEdge::set_owner(Player* player) {
 Player* RoadEdge::get_owner() {
     return this->owner;
 }
-int RoadEdge::get_id() const{
+int RoadEdge::get_id() const {
     return this->id;
 }
 
 std::string RoadEdge::get_color_code() {
-    if (this->owner == nullptr) {
-        return "\033[1;37m";  // White
+    if (this->owner == nullptr) {  // if the road edge has no owner
+        return "\033[1;37m";       // White
     }
     return this->owner->get_color_code();
 }

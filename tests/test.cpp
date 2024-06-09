@@ -192,7 +192,7 @@ TEST_CASE("place city") {
         catan.place_city(8, player1);
 
         CHECK(catan.get_vertices()[8].get_owner() == &player1);
-        CHECK(catan.get_vertices()[8].get_isCity());
+        CHECK(catan.get_vertices()[8].is_contains_city());
         CHECK(player1.get_victory_points() == 2);
 
         // check that the resources are taken from the player
@@ -225,7 +225,7 @@ TEST_CASE("place city") {
         CHECK_THROWS(catan.place_city(6, player1));
 
         // check that the vertex is still owned by player1 and it is not a city
-        CHECK((catan.get_vertices()[8].get_owner() == &player1 && !catan.get_vertices()[8].get_isCity()));
+        CHECK((catan.get_vertices()[8].get_owner() == &player1 && !catan.get_vertices()[8].is_contains_city()));
     }
 }
 

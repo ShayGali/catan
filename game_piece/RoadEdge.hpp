@@ -4,6 +4,11 @@
 
 class LandVertex;  // Forward declaration
 
+/**
+ * @brief RoadEdge class
+ * This class represents the road edge in the game.
+ * Each road edge has an id, owner, adjacent vertices and adjacent edges.
+ */
 class RoadEdge {
    private:
     int id;
@@ -29,5 +34,9 @@ class RoadEdge {
 
     int get_id() const;
 
+    /**
+     * @brief Get the color code of the owner of the road edge
+     * @return std::string the color code of the owner
+     */
     std::string get_color_code();
 };

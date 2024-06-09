@@ -3,7 +3,8 @@
 #include <iostream>
 
 LandVertex::LandVertex()
-    : id(-1), owner(nullptr), isCity(false){}
+    : id(-1), owner(nullptr), isCity(false) {}
+    
 LandVertex::LandVertex(int id)
     : id(id), owner(nullptr), isCity(false), adjacentVertices(3, nullptr), adjacentEdges(3, nullptr), resources(3) {
 }
@@ -50,7 +51,7 @@ void LandVertex::set_owner(Player* player) {
     this->owner = player;
 }
 
-bool LandVertex::get_isCity() const {
+bool LandVertex::is_contains_city() const {
     return this->isCity;
 }
 

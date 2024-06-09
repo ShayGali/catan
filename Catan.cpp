@@ -257,7 +257,7 @@ void Catan::place_city(int vertex_id, Player& player) {
         throw std::invalid_argument("Vertex is not owned by the player!");
     }
 
-    if (vertex.get_isCity()) {
+    if (vertex.is_contains_city()) {
         throw std::invalid_argument("Vertex is already a city!");
     }
 
@@ -409,7 +409,7 @@ void Catan::give_resources(int dices_sum) {
         for (int j = 0; j < 3; j++) {
             // check if the vertex has the resource for the dices sum
             if (vertices[i].get_resources()[j].second == dices_sum && vertices[i].get_owner() != nullptr) {
-                if (vertices[i].get_isCity()) { // if the vertex is a city give 2 resources
+                if (vertices[i].is_contains_city()) {  // if the vertex is a city give 2 resources
                     cout << "Player " << vertices[i].get_owner()->get_color() << " gets 2 " << vertices[i].get_resources()[j].first.get_emoji() << " from vertex " << i << "\n";
                     vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 2);
                 } else {
