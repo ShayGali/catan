@@ -13,8 +13,7 @@
 Catan::Catan(Player& player1, Player& player2, Player& player3)
     : players{&player1, &player2, &player3}, vertices(54), edges(72) {
     // initialize the random seed
-    // srand(time(nullptr));
-    srand(1);
+    srand(time(nullptr));
     current_player_index = 0;
 
     init_vertices();
@@ -409,9 +408,6 @@ Card* Catan::buy_dev_card(Player& player) {
     int num_of_cards = dev_cards.size();
     int rand_index = rand() % num_of_cards;
     Card* card = dev_cards[rand_index];
-    cout << (rand_index) << " " << num_of_cards << "\n";
-    cout << card << "\n";
-
 
     // remove card from deck
     dev_cards.erase(dev_cards.begin() + rand_index);
