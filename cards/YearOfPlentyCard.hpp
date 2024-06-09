@@ -7,5 +7,8 @@ class YearOfPlentyCard : public PromotionCard {
     std::string emoji() const override;
     CardType type() const override;
     Card* clone() const override;
+    /**
+     * @brief use the year of plenty card - will ask the user to choose two resources and give them to the player
+     */
     void use(Catan& game, Player& player) override;
 };

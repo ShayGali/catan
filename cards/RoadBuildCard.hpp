@@ -7,5 +7,8 @@ class RoadBuildCard : public PromotionCard {
     std::string emoji() const override;
     CardType type() const override;
     Card* clone() const override;
+    /**
+     * @brief use the road building card - will ask the user to where to build the roads
+     */
     void use(Catan& game, Player& player) override;
 };

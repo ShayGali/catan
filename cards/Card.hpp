@@ -15,12 +15,32 @@ enum class CardType {
 
 class Card {
    public:
+    /**
+     * @brief Get the description of the card
+     */
     virtual std::string get_description() const = 0;
+
+    /**
+     * @brief Get the emoji of the card
+     */
     virtual std::string emoji() const = 0;
+    /**
+     * @brief Get the type of the card
+     */
     virtual CardType type() const = 0;
+
+    /**
+     * @brief return a deep copy of the card. the copy is allocated on the heap
+     */
     virtual Card* clone() const = 0;
     virtual ~Card() = default;
 
+    /**
+     * @brief get card type from int.
+     * @param type - the type of the card as an int
+     * Knight = 0, VictoryPoint = 1, RoadBuilding = 2, Monopoly = 3, YearOfPlenty = 4
+     * @throws invalid_argument if the type is invalid
+     */
     static CardType from_int(int type) {
         switch (type) {
             case 0:
@@ -38,6 +58,11 @@ class Card {
         }
     }
 
+    /**
+     * @brief get emoji from card type
+     * @param type - the type of the card
+     * @throws invalid_argument if the type is invalid
+     */
     static std::string emoji_from_type(CardType type) {
         switch (type) {
             case CardType::KNIGHT:
