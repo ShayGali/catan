@@ -104,9 +104,56 @@ void real_game_with_demo_start() {
     cout << "Game over! " << winner->get_color() << " wins!" << endl;
 }
 
+void run_first_round() {
+    Player player1(PlayerColor::RED);
+    Player player2(PlayerColor::BLUE);
+    Player player3(PlayerColor::YELLOW);
+
+    Catan catan(player1, player2, player3);
+    srand(0);  // the first randoms will be: (2 5) (4 2) (6 2) (5 1) (4 2) (3 2) (3 2) (6 5) (1 1) (5 5)
+
+    // change the cin input stream
+    stringstream input_stream("8 13 20 31 31 46 45 59 14 15 21 23");
+    streambuf* prevcinbuf = cin.rdbuf(input_stream.rdbuf());
+    catan.first_round();
+    cin.rdbuf(prevcinbuf);
+
+    /*
+    player1 one roll and will be 7
+    player2 two roll and will be 6
+    player3 three roll and will be 8
+
+    player3 will buy a dev card and get a victory point
+    player3 will display the resources
+    player3 will display his victory points
+    */
+
+    input_stream = stringstream("1 E 1 E 1 4 E");
+    prevcinbuf = cin.rdbuf(input_stream.rdbuf());
+
+    for (int i = 0; i < 3; i++) {
+        catan.play_turn();
+    }
+
+    cin.rdbuf(prevcinbuf);
+    // wait got 1 second
+    Player* winner = catan.is_game_over();
+    if (winner == nullptr) {  // game shouldn't be over
+        cout << "Game over! No winner!" << endl;
+    } else {
+        cout << "Game over! " << winner->get_color() << " wins!" << endl;
+    }
+
+    // print the number of victory points of each player
+    cout << "Player 1: " << player1.get_victory_points() << endl;  // 2
+    cout << "Player 2: " << player2.get_victory_points() << endl;  // 2
+    cout << "Player 3: " << player3.get_victory_points() << endl;  // 3
+}
+
 int main() {
     // demo_first_round();
-    real_game_with_demo_start();
+    // real_game_with_demo_start();
     // real_game();
+    run_first_round();
     return 0;
 }
