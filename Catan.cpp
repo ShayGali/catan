@@ -16,6 +16,15 @@ Catan::Catan(Player& player1, Player& player2, Player& player3)
     srand(time(nullptr));
     current_player_index = 0;
 
+    // initialize the vertices
+    for (int i = 0; i < 54; i++) {
+        vertices[i] = LandVertex(i);
+    }
+
+    // initialize the edges
+    for (int i = 0; i < 72; i++) {
+        edges[i] = RoadEdge(i);
+    }
     init_vertices();
     init_edges();
     init_board();
@@ -39,6 +48,7 @@ Catan::Catan(const Catan& other) {
 }
 
 Catan::~Catan() {
+    // clear the dev cards
     for (int i = 0; i < dev_cards.size(); i++) {
         delete dev_cards[i];
     }
@@ -60,6 +70,7 @@ Catan& Catan::operator=(const Catan& other) {
         dev_cards.push_back(other.dev_cards[i]->clone());
     }
 
+    // copy the rest of the fields
     current_player_index = other.current_player_index;
     for (int i = 0; i < 54; i++) {
         vertices[i] = other.vertices[i];
@@ -76,6 +87,8 @@ Catan& Catan::operator=(const Catan& other) {
 
 void Catan::first_round() {
     display_board();
+
+    // give each player 1 settlement and 1 road
     for (int i = 0; i < NUM_PLAYERS; i++) {
         cout << players[i]->get_color() << " turn\n";
         players[i]->place_settlement(*this, true);
@@ -83,6 +96,8 @@ void Catan::first_round() {
         players[i]->place_road(*this, true);
         display_board();
     }
+
+    // give each player 1 settlement and 1 road, and the resources from the settlement
     for (int i = NUM_PLAYERS - 1; i >= 0; i--) {
         if (i != NUM_PLAYERS - 1) {
             cout << players[i]->get_color() << " turn\n";
@@ -103,10 +118,13 @@ void Catan::play_turn() {
     Player* current_player = players[current_player_index];
     cout << current_player->get_color() << " turn\n";
     current_player->play_turn(*this);
+
+    // move to the next player
     current_player_index = (current_player_index + 1) % NUM_PLAYERS;
 }
 
 Player* Catan::is_game_over() {
+    // check if some player has 10 victory points
     if (players[0]->get_victory_points() >= POINTS_TO_WIN) {
         return players[0];
     }
@@ -116,7 +134,20 @@ Player* Catan::is_game_over() {
     if (players[2]->get_victory_points() >= POINTS_TO_WIN) {
         return players[2];
     }
+
+    // no winner yet
     return nullptr;
+}
+
+Player* Catan::start_game() {
+    Player* winner = nullptr;
+    first_round();
+    // loop until the game is over
+    while ((winner = is_game_over()) == nullptr) {
+        play_turn();
+    }
+
+    return winner;
 }
 
 void Catan::place_settlement(int vertex_id, Player& player, bool first_round) {
@@ -159,6 +190,7 @@ void Catan::place_settlement(int vertex_id, Player& player, bool first_round) {
             throw std::invalid_argument("Not enough resources to place a settlement!");
         }
 
+        // pay for the settlement
         player.use_resource(resource::WOOD, 1);
         player.use_resource(resource::CLAY, 1);
         player.use_resource(resource::SHEEP, 1);
@@ -203,6 +235,7 @@ void Catan::place_road(int edge_id, Player& player, bool first_round) {
             throw std::invalid_argument("Not enough resources to place a road!");
         }
 
+        // pay for the road
         player.use_resource(resource::WOOD, 1);
         player.use_resource(resource::CLAY, 1);
     }
@@ -233,6 +266,7 @@ void Catan::place_city(int vertex_id, Player& player) {
         throw std::invalid_argument("Not enough resources to place a city!");
     }
 
+    // pay for the city
     player.use_resource(resource::WHEAT, 2);
     player.use_resource(resource::STONE, 3);
 
@@ -304,9 +338,11 @@ void Catan::make_trade_offer(Player& trader, const vector<pair<resource, int>>& 
 
             // trade the development cards
             for (int j = 0; j < offer_dev.size(); j++) {
+                // move the card from the trader to the player
                 Card* card = trader.remove_dev_card(offer_dev[j]);
                 players[i]->add_dev_card(card);
-                if (card->type() == CardType::KNIGHT) {
+
+                if (card->type() == CardType::KNIGHT) {  // check if need to update the knight counter
                     trader.remove_knight();
                     if (trader.get_knights() == 2) {
                         trader.add_victory_points(-2);
@@ -316,17 +352,18 @@ void Catan::make_trade_offer(Player& trader, const vector<pair<resource, int>>& 
                     if (players[i]->get_knights() >= 3) {
                         players[i]->add_victory_points(2);
                     }
-                } else if (card->type() == CardType::VICTORY_POINT) {
+                } else if (card->type() == CardType::VICTORY_POINT) {  // check if need to update the victory points
                     trader.add_victory_points(-1);
                     players[i]->add_victory_points(1);
                 }
             }
 
             for (int j = 0; j < request_dev.size(); j++) {
+                // move the card from the player to the trader
                 Card* card = players[i]->remove_dev_card(players[i]->get_dev_card(request_dev[j].first));
                 trader.add_dev_card(card);
 
-                if (card->type() == CardType::KNIGHT) {
+                if (card->type() == CardType::KNIGHT) {  // check if need to update the knight counter
                     players[i]->remove_knight();
                     if (players[i]->get_knights() == 2) {
                         players[i]->add_victory_points(-2);
@@ -336,7 +373,7 @@ void Catan::make_trade_offer(Player& trader, const vector<pair<resource, int>>& 
                     if (trader.get_knights() >= 3) {
                         trader.add_victory_points(2);
                     }
-                } else if (card->type() == CardType::VICTORY_POINT) {
+                } else if (card->type() == CardType::VICTORY_POINT) {  // check if need to update the victory points
                     players[i]->add_victory_points(-1);
                     trader.add_victory_points(1);
                 }
@@ -350,6 +387,7 @@ void Catan::make_trade_offer(Player& trader, const vector<pair<resource, int>>& 
 }
 
 void Catan::roll_dice() {
+    // roll two dices
     int dice_1 = rand() % 6 + 1;
     int dice_2 = rand() % 6 + 1;
     int sum = dice_1 + dice_2;
@@ -357,6 +395,7 @@ void Catan::roll_dice() {
     std::cout << "Dice 1: " << dice_1
               << "\nDice 2: " << dice_2
               << "\nSum: " << sum << std::endl;
+
     if (sum == 7) {
         return_resources_on_seven_roll();
     } else {
@@ -365,10 +404,12 @@ void Catan::roll_dice() {
 }
 
 void Catan::give_resources(int dices_sum) {
+    // search for the vertices that have the resources for the dices sum
     for (int i = 0; i < 54; i++) {
         for (int j = 0; j < 3; j++) {
+            // check if the vertex has the resource for the dices sum
             if (vertices[i].get_resources()[j].second == dices_sum && vertices[i].get_owner() != nullptr) {
-                if (vertices[i].get_isCity()) {
+                if (vertices[i].get_isCity()) { // if the vertex is a city give 2 resources
                     cout << "Player " << vertices[i].get_owner()->get_color() << " gets 2 " << vertices[i].get_resources()[j].first.get_emoji() << " from vertex " << i << "\n";
                     vertices[i].get_owner()->add_resource(vertices[i].get_resources()[j].first, 2);
                 } else {
@@ -435,21 +476,7 @@ void Catan::use_dev_card(Player& player, Card* card) {
     cast_card->use(*this, player);
 }
 
-Player* Catan::start_game() {
-    Player* winner = nullptr;
-    first_round();
-    while ((winner = is_game_over()) == nullptr) {
-        play_turn();
-    }
-    return winner;
-}
-
 void Catan::init_vertices() {
-    // initialize the vertices
-    for (int i = 0; i < 54; i++) {
-        vertices[i] = LandVertex(i);
-    }
-
     // first vertex row
     vertices[0].set_adjacent_vertex(&vertices[3], &vertices[4], nullptr);
     vertices[1].set_adjacent_vertex(&vertices[4], &vertices[5], nullptr);
@@ -596,11 +623,6 @@ void Catan::init_vertices() {
 }
 
 void Catan::init_edges() {
-    // initialize the edges
-    for (int i = 0; i < 72; i++) {
-        edges[i] = RoadEdge(i);
-    }
-
     // first edge row
     edges[0].set_adjacent_edge(&edges[1], &edges[6], nullptr, nullptr);
     edges[1].set_adjacent_edge(&edges[0], &edges[2], &edges[7], nullptr);
