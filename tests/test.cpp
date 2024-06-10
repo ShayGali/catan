@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "../Catan.hpp"
-#include "../cards/KngihtCard.hpp"
+#include "../cards/KnightCard.hpp"
 #include "../cards/MonopolyCard.hpp"
 #include "../cards/RoadBuildCard.hpp"
 #include "../cards/VictoryPointCard.hpp"

@@ -1,5 +1,5 @@
 // @author: shay.gali@msmail.ariel.ac.il
-#include "KngihtCard.hpp"
+#include "KnightCard.hpp"
 
 std::string KnightCard::get_description() const {
     return "If you have 3 ⚔️  you will get 2 victory points";

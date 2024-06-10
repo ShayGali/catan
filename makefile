@@ -4,7 +4,7 @@ CXXFLAGS=-std=c++2a -g -Wall
 
 GAME_PIECE_OBJECTS=game_piece/LandVertex.o game_piece/RoadEdge.o
 PLAYER_OBJECTS=player/Player.o
-CARDS_OBJECTS=cards/KngihtCard.o cards/MonopolyCard.o cards/RoadBuildCard.o cards/VictoryPointCard.o cards/YearOfPlentyCard.o
+CARDS_OBJECTS=cards/KnightCard.o cards/MonopolyCard.o cards/RoadBuildCard.o cards/VictoryPointCard.o cards/YearOfPlentyCard.o
 
 VALGRIND_FLAGS=--tool=memcheck -v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
 TIDY_FLAGS=-checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration,-cppcoreguidelines-pro-bounds-constant-array-index --warnings-as-errors=-* --

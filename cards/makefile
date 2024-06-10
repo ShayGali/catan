@@ -6,7 +6,7 @@ TIDY_FLAGS=-checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*
 
 .PHONY: all clean tidy
 
-all: KngihtCard.o MonopolyCard.o RoadBuildCard.o VictoryPointCard.o YearOfPlentyCard.o
+all: KnightCard.o MonopolyCard.o RoadBuildCard.o VictoryPointCard.o YearOfPlentyCard.o
 
 %.o: %.cpp %.hpp Card.hpp
 	$(CXX) $(CXXFLAGS) -c $<

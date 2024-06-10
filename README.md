@@ -7,10 +7,10 @@ The game is played by 3 players. The players take turns to build settlements and
 ## Images
 
 #### start of the game
-![start of the game](./borad_img/terminal_start.png)
+![start of the game](./board_img/terminal_start.png)
 
 #### middle of the game
-![middle of the game](./borad_img/terminal_middle.png)
+![middle of the game](./board_img/terminal_middle.png)
 
 
 ## Code Hierrachy

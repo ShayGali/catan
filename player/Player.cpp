@@ -2,7 +2,7 @@
 #include "Player.hpp"
 
 #include "../Catan.hpp"
-#include "../cards/KngihtCard.hpp"
+#include "../cards/KnightCard.hpp"
 #include "../cards/MonopolyCard.hpp"
 #include "../cards/PromotionCard.hpp"
 #include "../cards/RoadBuildCard.hpp"
