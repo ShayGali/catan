@@ -27,18 +27,15 @@ The game run in the terminal, and for each step a menu will be displayed to the 
 
 ### Vertex and Edge coordinates
 The vertices and edges are represented by numbers. The vertices are represented by numbers from 0 to 53, and the edges are represented by numbers from 0 to 71. You can see the coordinates of the vertices and edges in the next images.
-| map coordinates                 | default map coordinates                                                                                                                                 |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| ![graph](./board_img/graph.png) | ![defualt board](./board_img/resources.png) (image is taken from [here](https://colonist.io/dist/images/landing_page_map.png?rev=b263e7f485ddffef4138)) |
-|                                 |                                                                                                                                                         |
+| map coordinates| default map coordinates|
+|-|-|
+| ![graph](./board_img/graph.png) | ![defualt board](./board_img/resources.png) (image is taken from [here](https://colonist.io/dist/images/landing_page_map.png?rev=b263e7f485ddffef4138))|
+|||
 ## Images
 
-#### start of the game
-![start of the game](./board_img/terminal_start.png)
-
-#### middle of the game
-![middle of the game](./board_img/terminal_middle.png)
-
+|start of the game|middle of the game|
+|-----------------|------------------|
+|![start of the game](./board_img/terminal_start.png)|![middle of the game](./board_img/terminal_middle.png)|
 
 ## Code Hierrachy
 
