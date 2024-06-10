@@ -74,7 +74,7 @@ class Player {
     void add_resource(resource resource, int count);
     void use_resource(resource resource, int count);
     void display_resources() const;
-    void return_resources_on_seven_roll();
+    void robber();
 
     int place_settlement(Catan& game, bool first_round = false);
     void place_road(Catan& game, bool first_round = false);
@@ -101,16 +101,16 @@ class Player {
 
     /**
      * @brief ask the user to choose a dev card to use
-     * @param game the game object (will be pass to the use_dev_card function that actually use the dev card)
+     * @param game the game object (will be pass to the play_dev_card function that actually use the dev card)
      */
-    void use_dev_card(Catan& game);
+    void play_dev_card(Catan& game);
     /**
      * @brief use the dev card
      * @param game the game object
      * @param card the dev card to use
      *
      */
-    void use_dev_card(Catan& game, Card* card);
+    void play_dev_card(Catan& game, Card* card);
 
     /**
      * @brief buy a dev card for the player

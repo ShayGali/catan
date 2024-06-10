@@ -398,7 +398,7 @@ void Catan::roll_dice() {
               << "\nSum: " << sum << std::endl;
 
     if (sum == 7) {
-        return_resources_on_seven_roll();
+        robber();
     } else {
         give_resources(sum);
     }
@@ -422,10 +422,10 @@ void Catan::give_resources(int dices_sum) {
     }
 }
 
-void Catan::return_resources_on_seven_roll() {
+void Catan::robber() {
     for (int i = 0; i < NUM_PLAYERS; i++) {
         if (players[i]->get_total_resources() > 7) {
-            players[i]->return_resources_on_seven_roll();
+            players[i]->robber();
         }
     }
 }
@@ -468,13 +468,12 @@ Card* Catan::buy_dev_card(Player& player) {
     return card;
 }
 
-void Catan::use_dev_card(Player& player, Card* card) {
+void Catan::play_dev_card(Player& player, Card* card) {
     // check if the card is promotion card
     PromotionCard* cast_card = dynamic_cast<PromotionCard*>(card);
-    if (cast_card == nullptr) {
-        throw std::invalid_argument("card is not PromotionCard");
+    if (cast_card != nullptr) {
+        cast_card->use(*this, player);
     }
-    cast_card->use(*this, player);
 }
 
 void Catan::init_vertices() {

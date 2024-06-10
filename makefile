@@ -8,15 +8,16 @@ CARDS_OBJECTS=cards/KnightCard.o cards/MonopolyCard.o cards/RoadBuildCard.o card
 
 VALGRIND_FLAGS=--tool=memcheck -v --leak-check=full --show-leak-kinds=all  --error-exitcode=99
 TIDY_FLAGS=-checks=bugprone-*,clang-analyzer-*,cppcoreguidelines-*,performance-*,portability-*,readability-*,-cppcoreguidelines-pro-bounds-pointer-arithmetic,-cppcoreguidelines-owning-memory,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration,-cppcoreguidelines-pro-bounds-constant-array-index --warnings-as-errors=-* --
-PROG=catan
+
+PROG=main
 
 .PHONY: clean run tidy test valgrind catan game_piece player cards
 
-catan: Catan.o main.o game_piece player cards
-	$(CXX) $(CXXFLAGS) -o catan Catan.o main.o $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
+main: Catan.o main.o game_piece player cards
+	$(CXX) $(CXXFLAGS) -o main Catan.o main.o $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 
-run: $(PROG)
-	./$(PROG)
+catan:main
+	./main
 
 debug: $(PROG)
 	gdb $(PROG)

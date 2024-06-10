@@ -565,7 +565,7 @@ TEST_CASE("use promotion card") {
         istringstream input("1\n");
         streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
 
-        player1.use_dev_card(catan, monopoly);
+        player1.play_dev_card(catan, monopoly);
         // change cin back to standard input
         cin.rdbuf(prevcinbuf);
 
@@ -585,7 +585,7 @@ TEST_CASE("use promotion card") {
         istringstream input("1 2\n");
         streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
 
-        player1.use_dev_card(catan, year_of_plenty);
+        player1.play_dev_card(catan, year_of_plenty);
         // change cin back to standard input
         cin.rdbuf(prevcinbuf);
 
@@ -606,7 +606,7 @@ TEST_CASE("use promotion card") {
         istringstream input("12 13\n");
         streambuf* prevcinbuf = cin.rdbuf(input.rdbuf());
 
-        player1.use_dev_card(catan, road_building);
+        player1.play_dev_card(catan, road_building);
         // change cin back to standard input
         cin.rdbuf(prevcinbuf);
 

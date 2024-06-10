@@ -43,6 +43,7 @@ void MonopolyCard::use(Catan& game, Player& player) {
             continue;
         }
 
+        // Take all resources of type res from other_player and give them to player
         Player* other_player = game.get_players()[i];
         int num_resources = other_player->get_resource_count(res);
         other_player->use_resource(res, num_resources);

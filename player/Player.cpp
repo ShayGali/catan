@@ -80,7 +80,7 @@ void Player::play_turn(Catan &game) {
         }
         if (choice == '2') {
             try {
-                use_dev_card(game);
+                play_dev_card(game);
                 // if he use a development card, he can't roll the dice
                 return;
             } catch (std::exception &e) {
@@ -135,7 +135,7 @@ void Player::play_turn(Catan &game) {
                     break;
                 }
                 case '5': {
-                    use_dev_card(game);
+                    play_dev_card(game);
                     return;
                 }
                 case '6': {
@@ -522,7 +522,7 @@ bool Player::trade_request(Player &trader, const vector<pair<resource, int>> &of
     return choice == 'y' || choice == 'Y';
 }
 
-void Player::use_dev_card(Catan &game) {
+void Player::play_dev_card(Catan &game) {
     if (devCards.empty()) {
         throw std::invalid_argument("No development cards");
     }
@@ -562,11 +562,11 @@ void Player::use_dev_card(Catan &game) {
     Card *card = devCards[index - 1];
 
     // call the function that actually uses the development card
-    use_dev_card(game, card);
+    play_dev_card(game, card);
 }
 
-void Player::use_dev_card(Catan &game, Card *card) {
-    game.use_dev_card(*this, card);
+void Player::play_dev_card(Catan &game, Card *card) {
+    game.play_dev_card(*this, card);
 
     // if the card is Promotion, we need to delete it from the player's devCards
     if (dynamic_cast<PromotionCard *>(card) != nullptr) {
@@ -641,7 +641,7 @@ int Player::get_total_resources() const {
     return total;
 }
 
-void Player::return_resources_on_seven_roll() {
+void Player::robber() {
     cout << "Player " << get_color() << " has more than 7 resources\n";
     int total = get_total_resources();
     int total_to_return = total / 2;

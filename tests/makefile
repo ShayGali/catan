@@ -10,7 +10,7 @@ GAME=../Catan.o
 all: test
 
 test: $(PROG) test.o $(GAME) $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
-	make -C ../ catan
+	make -C ../ main
 	$(CXX) $(CXXFLAGS) -o ./test test.o $(GAME) $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 
 run: test

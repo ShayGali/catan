@@ -17,7 +17,7 @@ constexpr int POINTS_TO_WIN = 10;
 /**
  * @brief The main class of the game
  * it hold the game board, the players and the dev cards, and responsible for the game logic/
- * 
+ *
  * the board is represented by a graph, with vertices and edges.
  */
 class Catan {
@@ -118,7 +118,7 @@ class Catan {
      * @param player the player that places the city
      * @throw invalid_argument if the vertex_id is not valid, the vertex is not occupied by the player, the player does not have enough resources, the vertex is already a city
      * @throw runtime_error if there is no cards left
-     * 
+     *
      */
     void place_city(int vertex_id, Player& player);
 
@@ -137,7 +137,7 @@ class Catan {
     /**
      * helper functions to take resources from the player with more than 7 cards on 7 roll.
      */
-    void return_resources_on_seven_roll();
+    void robber();
 
     /**
      * @brief buy a dev card for the player
@@ -151,9 +151,8 @@ class Catan {
      * @brief use a dev card for the player
      * @param player the player that uses the dev card
      * @param card the dev card to use
-     * @throw invalid_argument if the card is not Promotion card
      */
-    void use_dev_card(Player& player, Card* card);
+    void play_dev_card(Player& player, Card* card);
 
     void make_trade_offer(Player& trader, const vector<pair<resource, int>>& offer_res, const vector<Card*>& offer_dev, const vector<pair<resource, int>>& request_res, const vector<pair<CardType, int>>& request_dev);
 };
