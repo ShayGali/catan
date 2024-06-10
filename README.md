@@ -25,6 +25,12 @@ The game is played by 3 players. The players take turns to build settlements and
 ## How to play the game
 The game run in the terminal, and for each step a menu will be displayed to the user. The user can choose the action that he wants to do by typing the number or character that is next to the action.
 
+### Vertex and Edge coordinates
+The vertices and edges are represented by numbers. The vertices are represented by numbers from 0 to 53, and the edges are represented by numbers from 0 to 71. You can see the coordinates of the vertices and edges in the next images.
+| map coordinates                             | default map coordinates                     |
+|---------------------------------------------|---------------------------------------------|
+| ![graph](./board_img/graph.png)             | ![defualt board](./board_img/resources.png) |
+
 ## Images
 
 #### start of the game
