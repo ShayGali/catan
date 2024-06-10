@@ -1,3 +1,4 @@
+// @author: shay.gali@msmail.ariel.ac.il
 #include "KngihtCard.hpp"
 
 std::string KnightCard::get_description() const {

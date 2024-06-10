@@ -1,3 +1,4 @@
+// @author: shay.gali@msmail.ariel.ac.il
 #include "RoadEdge.hpp"
 RoadEdge::RoadEdge()
     : id(-1), owner(nullptr) {

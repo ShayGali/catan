@@ -1,3 +1,4 @@
+// @author: shay.gali@msmail.ariel.ac.il
 #include "Player.hpp"
 
 #include "../Catan.hpp"

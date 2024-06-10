@@ -1,3 +1,4 @@
+// @author: shay.gali@msmail.ariel.ac.il
 #pragma once
 #include <iostream>
 #include <stdexcept>

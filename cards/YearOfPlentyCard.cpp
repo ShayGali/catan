@@ -1,3 +1,4 @@
+// @author: shay.gali@msmail.ariel.ac.il
 #include "YearOfPlentyCard.hpp"
 
 #include "../player/Player.hpp"

@@ -1,3 +1,4 @@
+// @author: shay.gali@msmail.ariel.ac.il
 #include "VictoryPointCard.hpp"
 
 std::string VictoryPointCard::get_description() const {
