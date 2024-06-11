@@ -14,9 +14,19 @@
 constexpr int NUM_PLAYERS = 3;
 constexpr int POINTS_TO_WIN = 10;
 
+constexpr int NUM_VERTICES = 54;
+constexpr int NUM_EDGES = 72;
+
+constexpr int VP_CARDS = 4;
+constexpr int KNIGHT_CARDS = 3;
+constexpr int ROAD_BUILDING_CARDS = 2;
+constexpr int MONOPOLY_CARDS = 2;
+constexpr int YEAR_OF_PLENTY_CARDS = 2;
+constexpr int TOTAL_DEV_CARDS = VP_CARDS + KNIGHT_CARDS + ROAD_BUILDING_CARDS + MONOPOLY_CARDS + YEAR_OF_PLENTY_CARDS;
+
 /**
  * @brief The main class of the game
- * it hold the game board, the players and the dev cards, and responsible for the game logic/
+ * it hold the game board, the players and the dev cards, and responsible for the game logic
  *
  * the board is represented by a graph, with vertices and edges.
  */

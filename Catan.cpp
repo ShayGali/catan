@@ -12,18 +12,18 @@
 #include "cards/YearOfPlentyCard.hpp"
 
 Catan::Catan(Player& player1, Player& player2, Player& player3)
-    : players{&player1, &player2, &player3}, vertices(54), edges(72) {
+    : players{&player1, &player2, &player3}, vertices(NUM_VERTICES), edges(NUM_EDGES) {
     // initialize the random seed
     srand(time(nullptr));
     current_player_index = 0;
 
     // initialize the vertices
-    for (int i = 0; i < 54; i++) {
+    for (int i = 0; i < NUM_VERTICES; i++) {
         vertices[i] = LandVertex(i);
     }
 
     // initialize the edges
-    for (int i = 0; i < 72; i++) {
+    for (int i = 0; i < NUM_EDGES; i++) {
         edges[i] = RoadEdge(i);
     }
     init_vertices();
@@ -802,6 +802,33 @@ void Catan::init_edges() {
 }
 
 void Catan::init_board() {
+    // vector<pair<resource, int>> tails = {
+    //     // first row
+    //     {resource::STONE, 10},
+    //     {resource::SHEEP, 2},
+    //     {resource::WOOD, 9},
+    //     // second row
+    //     {resource::WHEAT, 12},
+    //     {resource::CLAY, 6},
+    //     {resource::SHEEP, 4},
+    //     {resource::CLAY, 10},
+    //     // third row
+    //     {resource::WHEAT, 9},
+    //     {resource::WOOD, 11},
+    //     {resource::DESERT, 0},
+    //     {resource::WOOD, 3},
+    //     {resource::STONE, 8},
+    //     // fourth row
+    //     {resource::WOOD, 8},
+    //     {resource::STONE, 3},
+    //     {resource::WHEAT, 4},
+    //     {resource::SHEEP, 5},
+    //     // fifth row
+    //     {resource::CLAY, 5},
+    //     {resource::WHEAT, 6},
+    //     {resource::SHEEP, 11},
+    // };
+
     // first row
     vertices[0].set_resource(resource::STONE, 10, resource::NONE, 0, resource::NONE, 0);
     vertices[1].set_resource(resource::SHEEP, 2, resource::NONE, 0, resource::NONE, 0);
@@ -882,16 +909,16 @@ void Catan::init_board() {
 }
 
 void Catan::init_dev_cards() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < KNIGHT_CARDS; i++) {
         dev_cards.push_back(new KnightCard());
     }
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < ROAD_BUILDING_CARDS; i++) {
         dev_cards.push_back(new RoadBuildCard());
         dev_cards.push_back(new YearOfPlentyCard());
         dev_cards.push_back(new MonopolyCard());
     }
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < VP_CARDS; i++) {
         dev_cards.push_back(new VictoryPointCard());
     }
 }
