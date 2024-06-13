@@ -802,32 +802,6 @@ void Catan::init_edges() {
 }
 
 void Catan::init_board() {
-    // vector<pair<resource, int>> tails = {
-    //     // first row
-    //     {resource::STONE, 10},
-    //     {resource::SHEEP, 2},
-    //     {resource::WOOD, 9},
-    //     // second row
-    //     {resource::WHEAT, 12},
-    //     {resource::CLAY, 6},
-    //     {resource::SHEEP, 4},
-    //     {resource::CLAY, 10},
-    //     // third row
-    //     {resource::WHEAT, 9},
-    //     {resource::WOOD, 11},
-    //     {resource::DESERT, 0},
-    //     {resource::WOOD, 3},
-    //     {resource::STONE, 8},
-    //     // fourth row
-    //     {resource::WOOD, 8},
-    //     {resource::STONE, 3},
-    //     {resource::WHEAT, 4},
-    //     {resource::SHEEP, 5},
-    //     // fifth row
-    //     {resource::CLAY, 5},
-    //     {resource::WHEAT, 6},
-    //     {resource::SHEEP, 11},
-    // };
 
     // first row
     vertices[0].set_resource(resource::STONE, 10, resource::NONE, 0, resource::NONE, 0);
@@ -948,31 +922,3 @@ void Catan::display_board() {
          << "           " << edges[66].get_color_code() << "\\   " << edges[67].get_color_code() << "/  " << edges[68].get_color_code() << "\\   " << edges[69].get_color_code() << "/  " << edges[70].get_color_code() << "\\   " << edges[71].get_color_code() << "/\033[0m\n"
          << "             " << vertices[51].get_settlement_string() << "      " << vertices[52].get_settlement_string() << "       " << vertices[53].get_settlement_string() << "\n";
 }
-
-// void Catan::display_board_ids() {
-//     cout << "             " << vertices[0].get_id() << "        " << vertices[1].get_id() << "         " << vertices[2].get_id() << "\n"
-//          << "          " << edges[0].get_id() << "/   " << edges[1].get_id() << "\\  " << edges[2].get_id() << "/   " << edges[3].get_id() << "\\   " << edges[4].get_id() << "/   " << edges[5].get_id() << "\\\n"
-//          << "          " << vertices[3].get_id() << "       " << vertices[4].get_id() << "        " << vertices[5].get_id() << "        " << vertices[6].get_id() << "\n"
-//          << "         " << edges[6].get_id() << "|      " << edges[7].get_id() << "|       " << edges[8].get_id() << "|       " << edges[9].get_id() << "|   \n"
-//          << "          " << vertices[7].get_id() << "       " << vertices[8].get_id() << "        " << vertices[9].get_id() << "        " << vertices[10].get_id() << "\n"
-//          << "      " << edges[10].get_id() << "/ " << edges[11].get_id() << "\\  " << edges[12].get_id() << "/ " << edges[13].get_id() << "\\   " << edges[14].get_id() << "/" << edges[15].get_id() << "\\  " << edges[16].get_id() << "/" << edges[17].get_id() << "\\\n"
-//          << "     " << vertices[11].get_id() << "       " << vertices[12].get_id() << "      " << vertices[13].get_id() << "     " << vertices[14].get_id() << "      " << vertices[15].get_id() << "\n"
-//          << "     " << edges[18].get_id() << "|    " << edges[19].get_id() << "|      " << edges[20].get_id() << "|    " << edges[21].get_id() << "|   \n"
-//          << "     " << vertices[16].get_id() << "       " << vertices[17].get_id() << "        " << vertices[18].get_id() << "        " << vertices[19].get_id() << "      " << vertices[20].get_id() << "\n"
-//          << "   " << edges[23].get_id() << "/ " << edges[24].get_id() << "\\  " << edges[25].get_id() << "/ " << edges[26].get_id() << "\\   " << edges[27].get_id() << "/" << edges[28].get_id() << "\\  " << edges[29].get_id() << "/" << edges[30].get_id() << "\\  " << edges[31].get_id() << "/" << edges[32].get_id() << "\\\n"
-//          << "  " << vertices[21].get_id() << "       " << vertices[22].get_id() << "        " << vertices[23].get_id() << "        " << vertices[24].get_id() << "        " << vertices[25].get_id() << "        " << vertices[26].get_id() << "\n"
-//          << "  " << edges[33].get_id() << "|      " << edges[34].get_id() << "|       " << edges[35].get_id() << "|       " << edges[36].get_id() << "|       " << edges[37].get_id() << "|   \n"
-//          << "  " << vertices[27].get_id() << "       " << vertices[28].get_id() << "        " << vertices[29].get_id() << "        " << vertices[30].get_id() << "        " << vertices[31].get_id() << "        " << vertices[32].get_id() << "\n"
-//          << "   " << edges[38].get_id() << "\\  " << edges[40].get_id() << "/ " << edges[41].get_id() << "\\   " << edges[42].get_id() << "/" << edges[43].get_id() << "\\  " << edges[44].get_id() << "/" << edges[45].get_id() << "\\  " << edges[46].get_id() << "/" << edges[47].get_id() << "\\  " << edges[48].get_id() << "/\n"
-//          << "     " << vertices[33].get_id() << "        " << vertices[34].get_id() << "        " << vertices[35].get_id() << "        " << vertices[36].get_id() << "        " << vertices[37].get_id() << "\n"
-//          << "     " << edges[49].get_id() << "|      " << edges[50].get_id() << "|       " << edges[51].get_id() << "|       " << edges[52].get_id() << "|       " << edges[53].get_id() << "|   \n"
-//          << "     " << vertices[38].get_id() << "       " << vertices[39].get_id() << "        " << vertices[40].get_id() << "        " << vertices[41].get_id() << "        " << vertices[42].get_id() << "\n"
-//          << "      " << edges[54].get_id() << "\\  " << edges[55].get_id() << "/  " << edges[56].get_id() << "\\   " << edges[57].get_id() << "/" << edges[58].get_id() << "\\  " << edges[59].get_id() << "/" << edges[60].get_id() << "\\  " << edges[61].get_id() << "/\n"
-//          << "        " << vertices[43].get_id() << "        " << vertices[44].get_id() << "        " << vertices[45].get_id() << "        " << vertices[46].get_id() << "\n"
-//          << "        " << edges[62].get_id() << "|       " << edges[63].get_id() << "|       " << edges[64].get_id() << "|       " << edges[65].get_id() << "|   \n"
-//          << "        " << vertices[47].get_id() << "        " << vertices[48].get_id() << "        " << vertices[49].get_id() << "        " << vertices[50].get_id() << "\n"
-//          << "          " << edges[66].get_id() << "\\  " << edges[67].get_id() << "/  " << edges[68].get_id() << "\\   " << edges[69].get_id() << "/" << edges[70].get_id() << "\\  " << edges[71].get_id() << "/\n"
-//          << "            " << vertices[51].get_id() << "        " << vertices[52].get_id() << "         " << vertices[53].get_id() << "\n";
-
-//     ;
-// }
