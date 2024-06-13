@@ -71,10 +71,10 @@ class Catan {
 
     // getters
 
-    vector<LandVertex> get_vertices() { return vertices; }
-    vector<RoadEdge> get_edges() { return edges; }
-    vector<Player*> get_players() { return players; }
-    vector<Card*> get_dev_cards() { return dev_cards; }
+    vector<LandVertex>& get_vertices() { return vertices; }
+    vector<RoadEdge>& get_edges() { return edges; }
+    vector<Player*>& get_players() { return players; }
+    vector<Card*>& get_dev_cards() { return dev_cards; }
 
     /**
      * @brief the first round of the game. each player places 2 settlements and 2 roads
