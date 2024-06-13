@@ -16,7 +16,10 @@ PROG=main
 main: Catan.o main.o game_piece player cards
 	$(CXX) $(CXXFLAGS) -o main Catan.o main.o $(GAME_PIECE_OBJECTS) $(PLAYER_OBJECTS) $(CARDS_OBJECTS)
 
-catan:main
+catan: main
+	./main
+
+run: main
 	./main
 
 debug: $(PROG)
