@@ -34,6 +34,7 @@ class Card {
      * @brief return a deep copy of the card. the copy is allocated on the heap
      */
     virtual Card* clone() const = 0;
+    
     virtual ~Card() = default;
 
     /**

@@ -12,19 +12,19 @@
 #include "cards/YearOfPlentyCard.hpp"
 
 Catan::Catan(Player& player1, Player& player2, Player& player3)
-    : players{&player1, &player2, &player3}, vertices(NUM_VERTICES), edges(NUM_EDGES) {
+    : players{&player1, &player2, &player3} {
     // initialize the random seed
     srand(time(nullptr));
     current_player_index = 0;
 
     // initialize the vertices
     for (int i = 0; i < NUM_VERTICES; i++) {
-        vertices[i] = LandVertex(i);
+        vertices.emplace_back(i);  // initialize the vertices with their id
     }
 
     // initialize the edges
     for (int i = 0; i < NUM_EDGES; i++) {
-        edges[i] = RoadEdge(i);
+        edges.emplace_back(i);  // initialize the edges with their id
     }
     init_vertices();
     init_edges();
@@ -802,7 +802,6 @@ void Catan::init_edges() {
 }
 
 void Catan::init_board() {
-
     // first row
     vertices[0].set_resource(resource::STONE, 10, resource::NONE, 0, resource::NONE, 0);
     vertices[1].set_resource(resource::SHEEP, 2, resource::NONE, 0, resource::NONE, 0);
